@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+    var isAuth = User?.Identity?.IsAuthenticated ?? false;
+    var fullName = User?.Identity?.Name;
+}
+
+<div class="container py-5">
+    @if (isAuth)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-success d-flex align-items-center" role="alert">
+                    <div class="me-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
+                            <path d="M15.854 5.146a.5.5 0 0 1 0 .708l-3.182 3.182a.5.5 0 0 1-.707 0L9.646 6.525a.5.5 0 1 1 .708-.708l1.258 1.258 2.828-2.829a.5.5 0 0 1 .707 0z" />
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+                        </svg>
+                    </div>
+                    <div>
+                        Xin chào, <strong>@fullName</strong>! Bạn đã đăng nhập.
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a class="btn btn-primary me-2" asp-controller="Home" asp-action="Index">Trang chủ</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        <button class="btn btn-outline-danger">Đăng xuất</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="text-center mb-4">
+                    <h1 class="fw-bold mb-2">Hệ thống Quản lý Điểm Rèn Luyện</h1>
+                    <p class="text-muted mb-0">Vui lòng đăng nhập hoặc đăng ký để tiếp tục.</p>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">Đăng nhập</h5>
+                                <p class="card-text text-muted mb-4">Nếu bạn đã có tài khoản, hãy vào hệ thống tại đây.</p>
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary mt-auto w-100">
+                                    Đi tới trang Đăng nhập
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">Đăng ký</h5>
+                                <p class="card-text text-muted mb-4">Bạn chưa có tài khoản? Tạo tài khoản mới ngay.</p>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-success mt-auto w-100">
+                                    Đi tới trang Đăng ký
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (TempData["msg"] != null)
+                {
+                    <div class="alert alert-info mt-4">@TempData["msg"]</div>
+                }
+            </div>
+        </div>
+    }
+</div>
