@@ -1,0 +1,51 @@
+﻿.student-dashboard {
+    font-family: "Segoe UI", Roboto, sans-serif;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 120px);
+}
+
+.student-dashboard .banner-greeting {
+    background: linear-gradient(135deg, #0066cc, #2b8be6);
+}
+
+.overview-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 1rem;
+}
+
+.overview-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 1.5rem 3rem rgba(0, 102, 204, 0.15);
+}
+
+.overview-card .icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    background-color: #0066cc;
+}
+
+.activity-card {
+    border-radius: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.activity-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 2rem rgba(0, 102, 204, 0.1);
+}
+
+@media (max-width: 767.98px) {
+    .student-dashboard .banner-greeting {
+        text-align: center;
+    }
+    
+    .student-dashboard .banner-greeting .btn {
+        align-self: center;
+
+    }
+}
