@@ -1,0 +1,86 @@
+﻿@model RegisterVM
+@{
+    ViewData["Title"] = "Đăng ký";
+}
+
+<div class="auth-page d-flex align-items-center justify-content-center py-5">
+    <div class="card shadow-lg auth-card">
+        <div class="card-body p-4 p-lg-5">
+            <div class="text-center mb-4">
+                <div class="auth-logo mb-3">
+                    <img src="~/images/logo.jpg" alt="" class="img-fluid" style="height:60px;" asp-append-version="true" />
+                </div>
+                <h2 class="fw-bold text-primary">Đăng ký tài khoản sinh viên</h2>
+                <p class="text-muted">Chỉ áp dụng cho sinh viên khoa CNTT</p>
+            </div>
+
+            <form asp-action="Register" method="post" class="needs-validation" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label fw-semibold">Họ và tên</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-primary"><i class="fa-solid fa-user"></i></span>
+                        <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" />
+                    </div>
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-primary"><i class="fa-solid fa-envelope"></i></span>
+                        <input asp-for="Email" class="form-control" placeholder="mssv@huit.edu.vn" autocomplete="username" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label fw-semibold">Mật khẩu</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-primary"><i class="fa-solid fa-lock"></i></span>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="Tối thiểu 8 ký tự" autocomplete="new-password" />
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white text-primary"><i class="fa-solid fa-lock"></i></span>
+                        <input asp-for="ConfirmPassword" class="form-control" type="password" placeholder="Nhập lại mật khẩu" autocomplete="new-password" />
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <div class="alert alert-info small mt-3" role="alert">
+                    <i class="fa-solid fa-circle-info me-2"></i>@PasswordRules.Message
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2 mt-3">Tạo tài khoản</button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <span class="text-muted">Đã có tài khoản?</span>
+                <a asp-action="Login" class="fw-semibold">Đăng nhập ngay</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style>
+    .auth-page {
+        background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(0, 102, 204, 0.05));
+        min-height: 100vh;
+    }
+
+    .auth-card {
+        max-width: 540px;
+        border-top: 4px solid #0066CC;
+    }
+</style>
