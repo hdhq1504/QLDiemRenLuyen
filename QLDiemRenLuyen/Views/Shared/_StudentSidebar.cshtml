@@ -1,0 +1,53 @@
+﻿@using System
+@{
+    // Helper xác định trạng thái active cho từng đường dẫn
+    Func<string, string> isActive = (path) =>
+    {
+        var requestPath = Context?.Request?.Path.Value ?? string.Empty;
+        return requestPath.StartsWith(path, StringComparison.OrdinalIgnoreCase) ? "active" : string.Empty;
+    };
+}
+
+<!-- Sidebar điều hướng dành cho sinh viên -->
+<aside id="studentSidebar" class="sidebar offcanvas offcanvas-start offcanvas-md" data-bs-scroll="true" tabindex="-1" aria-labelledby="studentSidebarLabel" aria-label="Điều hướng sinh viên">
+    <div class="offcanvas-header d-md-none border-bottom">
+        <h5 class="offcanvas-title" id="studentSidebarLabel">Menu sinh viên</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+    </div>
+    <div class="offcanvas-body d-md-flex flex-column p-0">
+        <nav class="navbar-light" role="navigation">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/home")" href="/student/home">
+                        <i class="fa-solid fa-house me-2"></i>Bảng điều khiển
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/activities")" href="/student/activities">
+                        <i class="fa-solid fa-calendar-check me-2"></i>Hoạt động
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/scores")" href="/student/scores">
+                        <i class="fa-solid fa-chart-line me-2"></i>Điểm của tôi
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/proofs")" href="/student/proofs">
+                        <i class="fa-solid fa-file-circle-check me-2"></i>Minh chứng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/appeals")" href="/student/appeals">
+                        <i class="fa-solid fa-comment-dots me-2"></i>Phản hồi &amp; khiếu nại
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @isActive("/student/notifications")" href="/student/notifications">
+                        <i class="fa-solid fa-bell me-2"></i>Thông báo
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</aside>

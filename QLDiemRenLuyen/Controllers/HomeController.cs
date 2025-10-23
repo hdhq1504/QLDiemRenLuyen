@@ -10,17 +10,9 @@ namespace QLDiemRenLuyen.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
         [Authorize(Roles = "STUDENT")]
         /// Trang dashboard dành cho sinh viên.
-        [HttpGet]
-        [Route("/student/home")]
+        [HttpGet("student/home")]
         public IActionResult Index()
         {
             // TODO: Thay thế dữ liệu mock bằng dữ liệu thật lấy từ Oracle thông qua repository

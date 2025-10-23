@@ -42,6 +42,27 @@ app.UseRouting();
 app.UseAuthentication(); // chú ý thứ tự
 app.UseAuthorization();
 
+app.MapGet("/", context =>
+{
+    if (context.User.Identity?.IsAuthenticated == true)
+    {
+        var role = context.User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+        var redirectUrl = role?.ToUpperInvariant() switch
+        {
+            "ADMIN" => "/admin/dashboard",
+            "LECTURER" => "/advisor/classes",
+            "ADVISOR" => "/advisor/classes",
+            _ => "/student/home"
+        };
+        context.Response.Redirect(redirectUrl);
+    }
+    else
+    {
+        context.Response.Redirect("/Account/Login");
+    }
+    return Task.CompletedTask;
+});
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
