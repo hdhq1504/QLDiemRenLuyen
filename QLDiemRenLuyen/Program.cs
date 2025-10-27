@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // 5.1) DI
 builder.Services.AddSingleton<Database>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<StudentActivitiesRepository>();
 
 builder.Services.AddControllersWithViews();
 

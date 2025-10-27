@@ -1,0 +1,120 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.ActivityItemVm
+@using System.Globalization
+@{
+    var vi = new CultureInfo("vi-VN");
+    var status = (Model.Status ?? "").ToUpperInvariant();
+    var state = (Model.StudentState ?? "").ToUpperInvariant();
+
+    string StatusBadgeClass()
+    {
+        // Khớp với student.activities.js: default -> 'badge bg-secondary status-badge'
+        return status switch
+        {
+            "OPEN" => "badge bg-success status-badge",
+            "FULL" => "badge bg-warning text-dark status-badge",
+            _ => "badge bg-secondary status-badge"
+        };
+    }
+
+    string StateBadgeClass()
+    {
+        // Khớp với student.activities.js: default -> 'badge bg-light text-muted student-state-badge'
+        return state switch
+        {
+            "REGISTERED" => "badge bg-primary student-state-badge",
+            "CHECKED_IN" => "badge bg-info text-dark student-state-badge",
+            _ => "badge bg-light text-muted student-state-badge"
+        };
+    }
+}
+
+<div id="activityDetailModalContent" data-activity-id="@Model.Id">
+    <div class="modal-header">
+        <h5 class="modal-title d-flex align-items-center gap-2">
+            <span>@Model.Title</span>
+            <span class="@StatusBadgeClass()" data-status="@Model.Status">@Model.Status</span>
+            <span class="@StateBadgeClass()" data-state="@Model.StudentState">@Model.StudentState</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="row gy-3">
+            <div class="col-12">
+                <i class="fa fa-calendar me-2"></i>
+                <strong>Thời gian:</strong>
+                <span class="ms-1">
+                    @Model.StartAt.ToString("dd/MM/yyyy HH:mm", vi)
+                    –
+                    @Model.EndAt.ToString("dd/MM/yyyy HH:mm", vi)
+                </span>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.CriterionName))
+            {
+                <div class="col-12">
+                    <i class="fa fa-tags me-2"></i>
+                    <strong>Tiêu chí:</strong>
+                    <span class="ms-1">@Model.CriterionName</span>
+                </div>
+            }
+
+            <div class="col-12">
+                <i class="fa fa-users me-2"></i>
+                <strong>Số đã đăng ký:</strong>
+                <span class="registered-count">@Model.RegisteredCount</span>
+                <span class="max-seats">
+                    @if (Model.MaxSeats.HasValue)
+                    {
+                        @($" / {Model.MaxSeats.Value}")
+                    }
+                    else
+                    {
+                        @("- Không giới hạn")
+                    }
+                </span>
+            </div>
+
+            @* Nếu sau này bạn bổ sung Description vào ViewModel, có thể bật block dưới *@
+            @* <div class="col-12">
+                <hr class="my-2" />
+                <div class="text-muted">@Html.Raw(Model.Description)</div>
+            </div> *@
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        @{
+            // Render nút ban đầu (JS sẽ tự cập nhật lại khi có phản hồi POST)
+            if (state == "CHECKED_IN")
+            {
+                <button type="button" class="btn btn-outline-success" disabled>
+                    <i class="fa fa-check me-2"></i>Đã điểm danh
+                </button>
+            }
+            else if (status == "OPEN" && state == "NOT_REGISTERED")
+            {
+                <button type="button"
+                        class="btn btn-primary btn-register"
+                        data-action-url="/student/activities/@Model.Id/register">
+                    <i class="fa fa-check me-2"></i>Đăng ký tham gia
+                </button>
+            }
+            else if (status == "OPEN" && state == "REGISTERED")
+            {
+                <button type="button"
+                        class="btn btn-outline-danger btn-unregister"
+                        data-action-url="/student/activities/@Model.Id/unregister">
+                    <i class="fa fa-times me-2"></i>Hủy đăng ký
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" disabled>
+                    <i class="fa fa-lock me-2"></i>Hoạt động đã đóng
+                </button>
+            }
+        }
+        <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+    </div>
+</div>
