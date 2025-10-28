@@ -7,7 +7,6 @@
 
     string StatusBadgeClass()
     {
-        // Khớp với student.activities.js: default -> 'badge bg-secondary status-badge'
         return status switch
         {
             "OPEN" => "badge bg-success status-badge",
@@ -18,7 +17,6 @@
 
     string StateBadgeClass()
     {
-        // Khớp với student.activities.js: default -> 'badge bg-light text-muted student-state-badge'
         return state switch
         {
             "REGISTERED" => "badge bg-primary student-state-badge",
@@ -85,7 +83,6 @@
 
     <div class="modal-footer">
         @{
-            // Render nút ban đầu (JS sẽ tự cập nhật lại khi có phản hồi POST)
             if (state == "CHECKED_IN")
             {
                 <button type="button" class="btn btn-outline-success" disabled>

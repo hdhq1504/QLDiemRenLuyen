@@ -9,6 +9,7 @@ builder.Services.AddSingleton<Database>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<StudentActivitiesRepository>();
 builder.Services.AddScoped<StudentScoresRepository>();
+builder.Services.AddScoped<StudentProfileRepository>();
 
 builder.Services.AddControllersWithViews();
 

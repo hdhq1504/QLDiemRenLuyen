@@ -1,0 +1,29 @@
+﻿.student-profile .student-avatar {
+    width: 92px;
+    height: 92px;
+    object-fit: cover;
+    border: 3px solid var(--bs-primary);
+}
+
+.student-profile .card-header {
+    background-color: #f8f9fa;
+}
+
+.student-profile dl dt {
+    font-weight: 500;
+}
+
+.student-profile dl dd {
+    margin-bottom: 0.75rem;
+    word-break: break-word;
+}
+
+@media (max-width: 767.98px) {
+    .student-profile .card-body {
+        text-align: left;
+    }
+
+    .student-profile .avatar-wrapper {
+        width: 100%;
+    }
+}
