@@ -1,58 +1,66 @@
 ﻿:root {
-    --student-primary: #0066cc;
-    --student-light-bg: #f8f9fa;
-    --student-sidebar-width: 260px;
+    --student-primary: #2563eb;
+    --student-primary-dark: #1e40af;
+    --student-success: #10b981;
+    --student-warning: #f59e0b;
+    --student-info: #06b6d4;
+    --student-light-bg: #f8fafc;
+    --student-sidebar-width: 280px;
+    --student-border: #e2e8f0;
+    --student-text-dark: #1e293b;
+    --student-text-muted: #64748b;
 }
 
 body {
     background-color: var(--student-light-bg);
-    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 #app {
     min-height: 100vh;
 }
 
-/* Sidebar cố định trên desktop */
 .sidebar {
-    width: var(--student-sidebar-width);
+    width: var(--student-sidebar-width) !important;
     background-color: #ffffff;
-    border-right: 1px solid #e5e7eb;
+    border-right: 1px solid var(--student-border);
     z-index: 1030;
 }
 
     .sidebar .offcanvas-body {
+        width: var(--student-sidebar-width);
         padding-top: 1rem;
     }
 
     .sidebar .nav-link {
-        color: #495057;
-        padding: 0.75rem 1.5rem;
+        color: var(--student-text-muted);
+        padding: 0.875rem 1.5rem;
         font-weight: 500;
         display: flex;
         align-items: center;
-        border-left: 3px solid transparent;
-        transition: all 0.2s ease;
+        border-radius: 0.5rem;
+        margin: 0.25rem 0.75rem;
+        transition: all 0.15s ease;
+        border: none;
     }
 
         .sidebar .nav-link i {
-            width: 1.25rem;
+            width: 1.5rem;
             text-align: center;
+            margin-right: 0.75rem;
         }
 
         .sidebar .nav-link:hover {
-            color: var(--student-primary);
-            background-color: rgba(0, 102, 204, 0.08);
+            color: var(--student-text-dark);
+            background-color: var(--student-light-bg);
         }
 
         .sidebar .nav-link.active {
             color: var(--student-primary);
-            background-color: rgba(0, 102, 204, 0.12);
-            border-left-color: var(--student-primary);
+            background-color: #dbeafe;
             font-weight: 600;
         }
 
-/* Offcanvas cho màn hình nhỏ */
 @media (max-width: 767.98px) {
     .sidebar {
         width: 100%;
@@ -74,9 +82,9 @@ body {
     }
 }
 
-/* Header */
 .student-header .navbar {
     background: var(--student-primary);
+    border-bottom: 1px solid var(--student-border);
 }
 
 .student-header .logo {
@@ -86,13 +94,16 @@ body {
 }
 
 .btn-icon {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.15s ease;
+    border: none;
+    position: relative;
 }
 
     .btn-icon:hover {
@@ -101,19 +112,24 @@ body {
 
 .btn-profile {
     color: #ffffff;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2rem;
+    border: none;
 }
 
-    .btn-profile:focus {
+    .btn-profile:focus,
+    .btn-profile:hover {
         box-shadow: none;
+        background: rgba(255, 255, 255, 0.2);
     }
 
-/* Avatar */
 .avatar-image {
     width: 36px;
     height: 36px;
     border-radius: 50%;
     object-fit: cover;
-    border: 2px solid rgba(255, 255, 255, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .avatar-initials {
@@ -127,24 +143,25 @@ body {
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    font-size: 0.875rem;
 }
 
-/* Nội dung */
 main {
     background-color: transparent;
 }
 
-.card-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+.card {
+    border: 1px solid var(--student-border);
+    border-radius: 1rem;
+    transition: box-shadow 0.15s ease;
 }
 
-    .card-hover:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.12);
+    .card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
 .stat-pill {
-    background-color: rgba(0, 102, 204, 0.1);
+    background-color: rgba(37, 99, 235, 0.1);
     color: var(--student-primary);
     border-radius: 50rem;
     padding: 0.25rem 0.75rem;
@@ -154,15 +171,29 @@ main {
 
 .student-footer {
     background-color: #ffffff;
-    border-top: 1px solid #e5e7eb;
+    border-top: 1px solid var(--student-border);
 }
 
-/* Breadcrumb tuỳ chỉnh nếu cần */
 .breadcrumb-student .breadcrumb-item a {
     color: var(--student-primary);
     text-decoration: none;
 }
 
 .breadcrumb-student .breadcrumb-item.active {
-    color: #6c757d;
+    color: var(--student-text-muted);
 }
+
+.dropdown-menu {
+    border: 1px solid var(--student-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 0.75rem 1rem;
+    transition: background-color 0.15s ease;
+}
+
+    .dropdown-item:hover {
+        background-color: var(--student-light-bg);
+    }

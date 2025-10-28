@@ -1,0 +1,32 @@
+﻿@model IEnumerable<QLDiemRenLuyen.Models.ViewModels.StudentScores.TermScoreVm>
+
+@if (Model?.Any() == true)
+{
+    <div class="table-responsive">
+        <table class="table table-striped align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Học kỳ</th>
+                    <th class="text-end">Tổng điểm</th>
+                    <th class="text-center">Xếp loại</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.TermName</td>
+                        <td class="text-end">@item.Total.ToString("0.##")</td>
+                        <td class="text-center">@item.Classification</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="text-center text-muted py-4">
+        Chưa có dữ liệu lịch sử điểm rèn luyện.
+    </div>
+}

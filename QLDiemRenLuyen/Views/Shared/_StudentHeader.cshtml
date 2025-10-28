@@ -1,6 +1,5 @@
 ﻿@using System
 @{
-    // Lấy thông tin sinh viên từ ViewBag/ViewData
     var fullName = ViewBag.FullName as string ?? ViewData["FullName"] as string ?? "Sinh viên";
     var avatarUrl = ViewBag.AvatarUrl as string ?? ViewData["AvatarUrl"] as string;
     var notificationCount = ViewBag.NotificationCount as int? ?? ViewData["NotificationCount"] as int? ?? 0;
@@ -26,22 +25,17 @@
     var initials = GetInitials(fullName);
 }
 
-<!-- Header điều hướng trên cùng -->
 <header class="student-header shadow-sm">
     <nav class="navbar navbar-expand-md navbar-dark bg-primary px-3">
-        <!-- Nút thu gọn sidebar trên màn hình nhỏ -->
         <button class="btn btn-outline-light d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentSidebar" aria-controls="studentSidebar" aria-label="Mở menu">
             <i class="fa-solid fa-bars"></i>
         </button>
 
-        <!-- Logo và tiêu đề ứng dụng -->
         <a class="navbar-brand d-flex align-items-center" href="/student/home">
             <img src="~/images/logo.jpg" class="logo img-fluid me-2" alt="Logo HUIT" />
-            <span class="fw-semibold">HUIT • DRL</span>
         </a>
 
         <div class="ms-auto d-flex align-items-center gap-3">
-            <!-- Thông báo -->
             <a class="btn btn-icon position-relative text-white" href="/student/notifications" aria-label="Thông báo">
                 <i class="fa-regular fa-bell fa-lg"></i>
                 @if (notificationCount > 0)
@@ -53,7 +47,6 @@
                 }
             </a>
 
-            <!-- Menu người dùng -->
             <div class="dropdown">
                 <button class="btn btn-profile dropdown-toggle d-flex align-items-center" type="button" id="studentUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     @if (!string.IsNullOrWhiteSpace(avatarUrl))

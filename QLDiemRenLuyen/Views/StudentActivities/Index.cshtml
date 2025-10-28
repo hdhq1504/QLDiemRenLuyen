@@ -26,13 +26,11 @@
     }
 }
 
-<div id="student-activities-page" class="container py-3">
+<div id="student-activities-page" class="container-fluid py-3">
     <h2 class="mb-3">Danh sách hoạt động</h2>
 
-    @* Toast area for JS *@
     <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
 
-    @* Filter bar: Term + Search *@
     <form method="get" class="row g-2 align-items-end mb-3">
         <div class="col-md-4">
             <label for="termId" class="form-label">Học kỳ</label>
@@ -55,10 +53,8 @@
         </div>
     </form>
 
-    @* Anti-forgery for JS POST *@
     @Html.AntiForgeryToken()
 
-    @* Grid activities *@
     @if (Model.Items?.Data == null || !Model.Items.Data.Any())
     {
         <div class="alert alert-info"><i class="fa fa-info-circle me-2"></i>Chưa có hoạt động phù hợp.</div>
@@ -107,7 +103,7 @@
                                 <span class="@StateBadgeClass(a.StudentState)" data-state="@a.StudentState">@a.StudentState</span>
                             </div>
 
-                            <div class="mt-auto d-flex gap-2">
+                            <div class="mt-auto d-flex justify-content-center gap-2">
                                 @{
                                     var status = (a.Status ?? "").ToUpperInvariant();
                                     var state = (a.StudentState ?? "").ToUpperInvariant();
@@ -147,7 +143,7 @@
                                     var detailUrl = $"/student/activities/{a.Id}";
                                 }
                                 <button type="button"
-                                        class="btn btn-light border btn-detail"
+                                        class="btn btn-light border w-100 btn-detail"
                                         data-detail-url="@detailUrl"
                                         data-bs-toggle="modal"
                                         data-bs-target="#activityDetailModal">
@@ -160,7 +156,6 @@
             }
         </div>
 
-        @* Pagination *@
         <nav class="mt-4" aria-label="Phân trang">
             <ul class="pagination justify-content-center">
                 @{
@@ -190,7 +185,6 @@
     }
 </div>
 
-@* Detail Modal (JS sẽ load nội dung qua Ajax) *@
 <div class="modal fade" id="activityDetailModal" tabindex="-1" aria-labelledby="activityDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div id="activityDetailModalContent" class="modal-content">

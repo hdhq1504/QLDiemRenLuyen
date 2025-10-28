@@ -1,6 +1,5 @@
 ﻿@using System
 @{
-    // Helper xác định trạng thái active cho từng đường dẫn
     Func<string, string> isActive = (path) =>
     {
         var requestPath = Context?.Request?.Path.Value ?? string.Empty;

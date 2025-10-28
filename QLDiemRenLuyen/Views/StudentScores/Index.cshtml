@@ -1,0 +1,262 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.StudentScores.StudentScoreVm
+@{
+    Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+    ViewData["Title"] = ViewData["Title"] ?? "Điểm rèn luyện";
+    var totalDisplay = Model.Total.ToString("0.##");
+    var termName = string.IsNullOrWhiteSpace(Model.SelectedTermName) ? "Chưa xác định" : Model.SelectedTermName;
+    var displayName = string.IsNullOrWhiteSpace(Model.FullName) ? "Sinh viên" : Model.FullName;
+}
+
+<section class="student-scores">
+    <!-- Hàng lọc học kỳ -->
+    <form asp-action="Index" method="get" class="row g-2 align-items-end mb-4">
+        <div class="col-sm-6 col-md-4">
+            <label class="form-label text-muted">Chọn học kỳ</label>
+            <select class="form-select" name="termId">
+                @if (Model.Terms?.Any() == true)
+                {
+                    foreach (var term in Model.Terms)
+                    {
+                        @if (Model.SelectedTermId == term.Id)
+                        {
+                            <option value="@term.Id" selected>@term.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@term.Id">@term.Name</option>
+                        }
+                    }
+                }
+                else
+                {
+                    <option>Chưa có dữ liệu học kỳ</option>
+                }
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-filter me-1"></i>
+                Xem
+            </button>
+        </div>
+    </form>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <!-- Thông tin tổng quan -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3">
+                        <div>
+                            <h5 class="card-title text-primary fw-semibold mb-1">
+                                <i class="fa-solid fa-gauge me-2"></i>Điểm rèn luyện học kỳ @termName
+                            </h5>
+                            <p class="text-muted mb-0">@displayName</p>
+                        </div>
+                        <div class="display-4 fw-bold text-primary mb-0">@totalDisplay</div>
+                    </div>
+                    <div class="mt-3 d-flex flex-wrap align-items-center gap-2">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle">
+                            <i class="fa-solid fa-star me-1"></i>@Model.Classification
+                        </span>
+                        @if (!string.IsNullOrWhiteSpace(Model.Status))
+                        {
+                            <span class="badge bg-info-subtle text-info border border-info-subtle">
+                                <i class="fa-solid fa-circle-check me-1"></i>@Model.Status
+                            </span>
+                        }
+                    </div>
+                    <div class="row text-center mt-4">
+                        <div class="col-4">
+                            <div class="text-muted small">Điểm nền tảng</div>
+                            <div class="fw-semibold">@Model.BaseScore.ToString("0.##")</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Hoạt động</div>
+                            <div class="fw-semibold text-success">+@Model.ActivityScore.ToString("0.##")</div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-muted small">Điều chỉnh khác</div>
+                            <div class="fw-semibold text-secondary">+@Model.Adjustments.ToString("0.##")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bảng chi tiết tiêu chí -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-0 pb-0">
+                    <h6 class="card-title mb-0 text-primary">
+                        <i class="fa-solid fa-layer-group me-2"></i>Chi tiết theo tiêu chí
+                    </h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Breakdown?.Any() == true)
+                    {
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:8%">Nhóm</th>
+                                        <th>Tiêu chí</th>
+                                        <th class="text-end" style="width:12%">Điểm đạt</th>
+                                        <th class="text-end" style="width:12%">Tối đa</th>
+                                        <th style="width:30%">Tỷ lệ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Breakdown)
+                                    {
+                                        var rawPercent = item.MaxPoint > 0 ? (double)(item.Earned / item.MaxPoint) * 100d : 0d;
+                                        var percent = Math.Min(100d, Math.Max(0d, rawPercent));
+                                        <tr>
+                                            <td class="text-center fw-semibold">@item.GroupNo</td>
+                                            <td>@item.Name</td>
+                                            <td class="text-end">@item.Earned.ToString("0.##")</td>
+                                            <td class="text-end">@item.MaxPoint.ToString("0.##")</td>
+                                            <td>
+                                                <div class="progress" style="height:6px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" style="width:@percent.ToString("0.##")%" aria-valuenow="@percent.ToString("0.##")" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="small text-muted mt-1">@percent.ToString("0.##")%</div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-light border rounded text-muted mb-0">
+                            Chưa có dữ liệu chấm điểm theo tiêu chí cho học kỳ này.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @if (Model.RecentActivities?.Any() == true)
+            {
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white border-0 pb-0">
+                        <h6 class="card-title text-primary mb-0">
+                            <i class="fa-solid fa-list-check me-2"></i>Hoạt động đóng góp gần đây
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            @foreach (var act in Model.RecentActivities)
+                            {
+                                <div class="list-group-item px-0 d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-semibold">@act.Title</div>
+                                        <div class="text-muted small">
+                                            @if (act.StartAt.HasValue)
+                                            {
+                                                <span>@act.StartAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                                if (act.EndAt.HasValue)
+                                                {
+                                                    <span> - @act.EndAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>Chưa xác định thời gian</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle">+@act.Points.ToString("0.##")</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-body">
+                    <h6 class="text-primary fw-semibold mb-3">
+                        <i class="fa-solid fa-arrow-trend-up me-2"></i>Lịch sử điểm gần đây
+                    </h6>
+                    @if (Model.HistoryPreview?.Any() == true)
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var term in Model.HistoryPreview)
+                            {
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div class="fw-semibold">@term.TermName</div>
+                                        <div class="text-muted small">@term.Classification</div>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle">@term.Total.ToString("0.##")</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <div class="text-muted small">Chưa có dữ liệu lịch sử.</div>
+                    }
+                    <div class="mt-3 text-end">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#historyModal">
+                            Xem tất cả
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal lịch sử -->
+<div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lịch sử điểm rèn luyện</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body" id="historyContent">
+                <div class="text-center py-4 text-muted">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const modalEl = document.getElementById('historyModal');
+            if (!modalEl) return;
+            modalEl.addEventListener('show.bs.modal', async () => {
+                const container = document.getElementById('historyContent');
+                if (!container || container.dataset.loaded === '1') {
+                    return;
+                }
+
+                try {
+                    container.innerHTML = `
+                        <div class="text-center py-4 text-muted">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang tải...</span>
+                            </div>
+                        </div>`;
+                    const response = await fetch('@Url.Action("History", "StudentScores")');
+                    if (!response.ok) {
+                        throw new Error('network');
+                    }
+                    const html = await response.text();
+                    container.innerHTML = html;
+                    container.dataset.loaded = '1';
+                } catch (err) {
+                    container.innerHTML = '<div class="alert alert-danger">Không thể tải dữ liệu lịch sử. Vui lòng thử lại sau.</div>';
+                }
+            });
+        })();
+    </script>
+}
