@@ -1,0 +1,39 @@
+﻿.status-draft {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+.status-submitted {
+    background-color: #0dcaf0;
+    color: #0a1c2c;
+}
+
+.status-responded {
+    background-color: #198754;
+    color: #fff;
+}
+
+.status-closed {
+    background-color: #343a40;
+    color: #fff;
+}
+
+#student-feedback-page .table td .text-truncate {
+    max-width: 320px;
+}
+
+@media (max-width: 768px) {
+    #student-feedback-page .table td .text-truncate {
+        max-width: 200px;
+    }
+}
+
+.feedback-content,
+.feedback-response {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+#toastArea .toast {
+    min-width: 240px;
+}

@@ -67,19 +67,6 @@ namespace QLDiemRenLuyen.Models.ViewModels
     }
 
     /// <summary>
-    /// Danh sách phân trang dùng chung cho các view.
-    /// </summary>
-    /// <typeparam name="T">Kiểu phần tử.</typeparam>
-    public class PagedList<T>
-    {
-        public IEnumerable<T> Data { get; set; } = new List<T>();
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-        public int TotalItems { get; set; }
-        public int TotalPages { get; set; }
-    }
-
-    /// <summary>
     /// ViewModel cho modal tải lên minh chứng.
     /// </summary>
     public class ProofUploadModalVm

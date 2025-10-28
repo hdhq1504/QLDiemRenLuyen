@@ -87,13 +87,7 @@ namespace QLDiemRenLuyen.Data
                    AND (:aid IS NULL OR p.ACTIVITY_ID = :aid)
                    AND (:kw IS NULL OR LOWER(p.FILE_NAME) LIKE '%' || :kw || '%' OR LOWER(p.NOTE) LIKE '%' || :kw || '%')";
 
-            var result = new PagedList<ProofItemVm>
-            {
-                Page = page,
-                PageSize = pageSize,
-                Data = new List<ProofItemVm>()
-            };
-
+            var items = new List<ProofItemVm>();
             var offset = (page - 1) * pageSize;
             var kw = string.IsNullOrWhiteSpace(keyword) ? null : keyword.Trim().ToLowerInvariant();
 
@@ -108,11 +102,10 @@ namespace QLDiemRenLuyen.Data
                 cmd.Parameters.Add(new OracleParameter("offset", OracleDbType.Int32, offset, ParameterDirection.Input));
                 cmd.Parameters.Add(new OracleParameter("pageSize", OracleDbType.Int32, pageSize, ParameterDirection.Input));
 
-                var list = (List<ProofItemVm>)result.Data;
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
                 {
-                    list.Add(new ProofItemVm
+                    items.Add(new ProofItemVm
                     {
                         Id = reader.GetInt64(0),
                         ActivityId = reader.GetInt32(1),
@@ -126,18 +119,24 @@ namespace QLDiemRenLuyen.Data
                 }
             }
 
+            int total;
             await using (var countCmd = new OracleCommand(countSql, conn) { BindByName = true })
             {
                 countCmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input));
                 countCmd.Parameters.Add(new OracleParameter("aid", OracleDbType.Int32, (object?)activityId ?? DBNull.Value, ParameterDirection.Input));
                 countCmd.Parameters.Add(new OracleParameter("kw", OracleDbType.Varchar2, (object?)kw ?? DBNull.Value, ParameterDirection.Input));
 
-                var total = Convert.ToInt32(await countCmd.ExecuteScalarAsync());
-                result.TotalItems = total;
-                result.TotalPages = (int)Math.Ceiling(total / (double)pageSize);
+                total = Convert.ToInt32(await countCmd.ExecuteScalarAsync());
             }
 
-            return result;
+            return new PagedList<ProofItemVm>
+            {
+                Data = items,
+                TotalItems = total,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((double)total / pageSize)
+            };
         }
 
         /// <summary>

@@ -43,46 +43,46 @@ namespace QLDiemRenLuyen.Data
             return result;
         }
 
-        public async Task<(IEnumerable<ActivityItemVm> items, int total)> SearchActivitiesAsync(
+        public async Task<PagedList<ActivityItemVm>> SearchActivitiesAsync(
             string? termId, string? keyword, int page, int pageSize, string studentId)
         {
             const string sql = @"
                 SELECT *
                 FROM (
                     SELECT 
-                        a.ID,
-                        a.TITLE,
-                        a.DESCRIPTION,
+                      a.ID,
+               a.TITLE,
+                a.DESCRIPTION,
                         a.START_AT,
-                        a.END_AT,
-                        a.STATUS,
-                        a.MAX_SEATS,
-                        c.NAME AS CRITERION_NAME,
-                        (SELECT COUNT(*) FROM REGISTRATIONS r WHERE r.ACTIVITY_ID = a.ID) AS REG_CNT,
-                        (SELECT MAX(STATUS) FROM REGISTRATIONS r2 WHERE r2.ACTIVITY_ID = a.ID AND r2.STUDENT_ID = :sid) AS STUDENT_STATE,
-                        ROW_NUMBER() OVER (ORDER BY a.START_AT DESC) AS rn
-                    FROM ACTIVITIES a
-                    LEFT JOIN CRITERIA c ON c.ID = a.CRITERION_ID
-                    WHERE
-                        (:termId IS NULL OR a.TERM_ID = :termId)
-                        AND (
-                            :kw IS NULL
-                            OR LOWER(a.TITLE) LIKE '%' || LOWER(:kw) || '%'
-                            OR REGEXP_LIKE(DBMS_LOB.SUBSTR(a.DESCRIPTION, 4000, 1), :kw, 'i')
-                        )
-                ) t
-                WHERE t.rn BETWEEN :startRow AND :endRow";
+               a.END_AT,
+     a.STATUS,
+                a.MAX_SEATS,
+                  c.NAME AS CRITERION_NAME,
+                   (SELECT COUNT(*) FROM REGISTRATIONS r WHERE r.ACTIVITY_ID = a.ID) AS REG_CNT,
+                    (SELECT MAX(STATUS) FROM REGISTRATIONS r2 WHERE r2.ACTIVITY_ID = a.ID AND r2.STUDENT_ID = :sid) AS STUDENT_STATE,
+          ROW_NUMBER() OVER (ORDER BY a.START_AT DESC) AS rn
+        FROM ACTIVITIES a
+      LEFT JOIN CRITERIA c ON c.ID = a.CRITERION_ID
+                WHERE
+             (:termId IS NULL OR a.TERM_ID = :termId)
+        AND (
+      :kw IS NULL
+        OR LOWER(a.TITLE) LIKE '%' || LOWER(:kw) || '%'
+               OR REGEXP_LIKE(DBMS_LOB.SUBSTR(a.DESCRIPTION, 4000, 1), :kw, 'i')
+             )
+            ) t
+            WHERE t.rn BETWEEN :startRow AND :endRow";
 
             const string countSql = @"
-                SELECT COUNT(*)
+             SELECT COUNT(*)
                 FROM ACTIVITIES a
                 WHERE
-                    (:termId IS NULL OR a.TERM_ID = :termId)
-                    AND (
-                        :kw IS NULL
-                        OR LOWER(a.TITLE) LIKE '%' || LOWER(:kw) || '%'
+        (:termId IS NULL OR a.TERM_ID = :termId)
+                AND (
+                  :kw IS NULL
+                 OR LOWER(a.TITLE) LIKE '%' || LOWER(:kw) || '%'
                         OR REGEXP_LIKE(DBMS_LOB.SUBSTR(a.DESCRIPTION, 4000, 1), :kw, 'i')
-                    )";
+             )";
 
             var items = new List<ActivityItemVm>();
             var startRow = (page - 1) * pageSize + 1;
@@ -119,7 +119,13 @@ namespace QLDiemRenLuyen.Data
                 total = Convert.ToInt32(await countCmd.ExecuteScalarAsync());
             }
 
-            return (items, total);
+            return new PagedList<ActivityItemVm>
+            {
+                Data = items,
+                TotalItems = total,
+                Page = page,
+                PageSize = pageSize
+            };
         }
 
         public async Task<ActivityItemVm?> GetActivityAsync(string id, string studentId)

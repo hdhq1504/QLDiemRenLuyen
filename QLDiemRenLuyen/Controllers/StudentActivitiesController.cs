@@ -39,22 +39,14 @@ namespace QLDiemRenLuyen.Controllers
             var keyword = string.IsNullOrWhiteSpace(q) ? null : q.Trim();
 
             var terms = await _repository.GetTermsAsync();
-            var (items, total) = await _repository.SearchActivitiesAsync(termId, keyword, page, pageSize, studentId);
-            var totalPages = (int)Math.Ceiling(total / (double)pageSize);
+            var pagedResult = await _repository.SearchActivitiesAsync(termId, keyword, page, pageSize, studentId);
 
             var model = new StudentActivitiesVm
             {
                 SelectedTermId = termId,
                 Keyword = keyword,
                 Terms = terms,
-                Items = new PagedList<ActivityItemVm>
-                {
-                    Data = items,
-                    Page = page,
-                    PageSize = pageSize,
-                    TotalItems = total,
-                    TotalPages = totalPages
-                }
+                Items = pagedResult
             };
 
             return View(model);

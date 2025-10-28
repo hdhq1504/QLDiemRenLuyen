@@ -1,0 +1,57 @@
+﻿@using System
+@model QLDiemRenLuyen.Models.ViewModels.StudentFeedback.FeedbackEditModalVm
+
+<div class="modal fade" id="feedbackEditModal" tabindex="-1" aria-labelledby="feedbackEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackEditModalLabel">@(Model.IsEdit ? "Chỉnh sửa phản hồi" : "Gửi phản hồi mới")</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <form id="feedbackEditForm" method="post" action="@Model.FormAction" data-status="@Model.Status">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="SubmitStatus" value="@Model.Feedback.SubmitStatus" />
+                    <div class="mb-3">
+                        <label class="form-label" for="feedbackTerm">Học kỳ <span class="text-danger">*</span></label>
+                        <select id="feedbackTerm" name="TermId" class="form-select" required>
+                            @foreach (var term in Model.Terms)
+                            {
+                                var isSelected = string.Equals(term.Id, Model.Feedback.TermId, StringComparison.OrdinalIgnoreCase);
+                                <option value="@term.Id" selected="@(isSelected ? "selected" : null)">@term.Name</option>
+                            }
+                        </select>
+                        <div class="invalid-feedback">Vui lòng chọn học kỳ.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="feedbackCriterion">Tiêu chí (không bắt buộc)</label>
+                        <select id="feedbackCriterion" name="CriterionId" class="form-select">
+                            <option value="">-- Không chọn --</option>
+                            @foreach (var criterion in Model.Criteria)
+                            {
+                                var isSelected = !string.IsNullOrEmpty(Model.Feedback.CriterionId) && string.Equals(Model.Feedback.CriterionId, criterion.Id, StringComparison.OrdinalIgnoreCase);
+                                <option value="@criterion.Id" selected="@(isSelected ? "selected" : null)">@criterion.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="feedbackTitle">Tiêu đề <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="feedbackTitle" name="Title" value="@Model.Feedback.Title" maxlength="255" required placeholder="Nhập tiêu đề phản hồi" />
+                        <div class="invalid-feedback">Tiêu đề là bắt buộc và tối đa 255 ký tự.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="feedbackContent">Nội dung <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="feedbackContent" name="Content" rows="6" minlength="10" maxlength="1000" required placeholder="Trình bày chi tiết thắc mắc hoặc đề xuất">@Model.Feedback.Content</textarea>
+                        <div class="form-text">Nội dung tối thiểu 10 và tối đa 1000 ký tự.</div>
+                    </div>
+                    <div class="alert alert-warning d-none" id="feedbackEditErrors"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-outline-secondary" data-submit="DRAFT">Lưu nháp</button>
+                <button type="button" class="btn btn-primary" data-submit="SUBMITTED">Gửi phản hồi</button>
+            </div>
+        </div>
+    </div>
+</div>
