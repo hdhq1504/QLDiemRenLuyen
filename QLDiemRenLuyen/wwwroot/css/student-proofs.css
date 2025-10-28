@@ -1,0 +1,33 @@
+﻿#student-proofs-page .proof-name span {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#student-proofs-page .proof-status {
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+#student-proofs-page .badge.bg-secondary {
+    background-color: #6c757d !important;
+}
+
+#student-proofs-page .badge.bg-success {
+    background-color: #198754 !important;
+}
+
+#student-proofs-page .badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+#student-proofs-page .btn-group .btn {
+    min-width: 40px;
+}
+
+@media (max-width: 768px) {
+    #student-proofs-page .table-responsive {
+        border-radius: 0.5rem;
+    }
+}

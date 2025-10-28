@@ -39,17 +39,4 @@ namespace QLDiemRenLuyen.Models.ViewModels
         public int RegisteredCount { get; set; }
         public string StudentState { get; set; } = "NOT_REGISTERED";
     }
-
-    /// <summary>
-    /// Lớp mô tả danh sách phân trang cho UI.
-    /// </summary>
-    /// <typeparam name="T">Kiểu dữ liệu của phần tử.</typeparam>
-    public class PagedList<T>
-    {
-        public IEnumerable<T> Data { get; set; } = new List<T>();
-        public int Page { get; set; }
-        public int PageSize { get; set; }
-        public int TotalItems { get; set; }
-        public int TotalPages { get; set; }
-    }
 }

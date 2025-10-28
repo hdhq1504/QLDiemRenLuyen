@@ -1,0 +1,158 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.StudentProofsVm
+@using System
+@using System.Globalization
+@using System.Linq
+@{
+    ViewData["Title"] = "Minh chứng của tôi";
+    Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+    var vi = new CultureInfo("vi-VN");
+
+    string StatusBadge(string? status)
+    {
+        return (status ?? string.Empty).ToUpperInvariant() switch
+        {
+            "APPROVED" => "badge bg-success proof-status",
+            "REJECTED" => "badge bg-danger proof-status",
+            _ => "badge bg-secondary proof-status"
+        };
+    }
+
+    string FormatSize(long size)
+    {
+        if (size < 1024)
+        {
+            return $"{size} B";
+        }
+        var kb = size / 1024d;
+        if (kb < 1024)
+        {
+            return $"{kb:F1} KB";
+        }
+        var mb = kb / 1024d;
+        return $"{mb:F2} MB";
+    }
+}
+
+<div id="student-proofs-page" class="container-fluid py-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-3">
+        <div>
+            <h2 class="mb-0">Minh chứng của tôi</h2>
+            <p class="text-muted mb-0">Quản lý và theo dõi trạng thái minh chứng đã nộp.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-primary" id="btnOpenUpload" data-activity-id="@(Model.SelectedActivityId?.ToString() ?? string.Empty)">
+                <i class="fa-solid fa-cloud-arrow-up me-1"></i>Tải lên minh chứng
+            </button>
+        </div>
+    </div>
+
+    <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080"></div>
+
+    <form method="get" class="row g-2 align-items-end mb-4" id="proofFilterForm">
+        <div class="col-lg-4 col-md-6">
+            <label for="activityId" class="form-label">Hoạt động</label>
+            <select id="activityId" name="activityId" class="form-select">
+                <option value="">-- Tất cả --</option>
+                @foreach (var act in Model.Activities)
+                {
+                    <option value="@act.Id" selected="@(act.Id == Model.SelectedActivityId)">@act.Title</option>
+                }
+            </select>
+        </div>
+        <div class="col-lg-4 col-md-6">
+            <label for="q" class="form-label">Từ khóa</label>
+            <input id="q" name="q" value="@(Model.Keyword ?? string.Empty)" class="form-control" placeholder="Tên tệp hoặc ghi chú" />
+        </div>
+        <div class="col-lg-4 col-md-12 d-grid">
+            <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-filter me-1"></i>Lọc</button>
+        </div>
+    </form>
+
+    @Html.AntiForgeryToken()
+
+    @if (Model.Items == null || Model.Items.Data == null || !Model.Items.Data.Any())
+    {
+        <div class="alert alert-info"><i class="fa-solid fa-circle-info me-2"></i>Chưa có minh chứng nào.</div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Hoạt động</th>
+                        <th scope="col">Tên tệp</th>
+                        <th scope="col">Kích thước</th>
+                        <th scope="col">Loại</th>
+                        <th scope="col">Trạng thái</th>
+                        <th scope="col">Ngày gửi</th>
+                        <th scope="col" class="text-end">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items.Data)
+                    {
+                        <tr data-proof-id="@item.Id" data-status="@item.Status">
+                            <td class="fw-semibold">
+                                <div class="text-truncate" title="@item.ActivityTitle">@item.ActivityTitle</div>
+                            </td>
+                            <td class="proof-name">
+                                <span class="text-truncate d-inline-block" title="@item.FileName">@item.FileName</span>
+                            </td>
+                            <td>@FormatSize(item.FileSize)</td>
+                            <td>@item.ContentType</td>
+                            <td>
+                                <span class="@StatusBadge(item.Status)">@item.Status</span>
+                            </td>
+                            <td>@item.CreatedAtUtc.ToLocalTime().ToString("dd/MM/yyyy HH:mm", vi)</td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a class="btn btn-outline-secondary" href="/student/proofs/download/@item.Id">
+                                        <i class="fa-solid fa-download"></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-delete-proof @(string.Equals(item.Status, "SUBMITTED", StringComparison.OrdinalIgnoreCase) ? string.Empty : "d-none")"
+                                            data-delete-url="/student/proofs/delete/@item.Id">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        if (Model.Items.TotalPages > 1)
+        {
+            var page = Model.Items.Page;
+            var totalPages = Model.Items.TotalPages;
+            string PageUrl(int p) => Url.Action("Index", new { page = p, pageSize = Model.Items.PageSize, activityId = Model.SelectedActivityId, q = Model.Keyword }) ?? $"?page={p}";
+
+            <nav class="mt-3" aria-label="Phân trang minh chứng">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(page <= 1 ? "disabled" : string.Empty)">
+                        <a class="page-link" href="@PageUrl(Math.Max(1, page - 1))" aria-label="Trang trước">&laquo;</a>
+                    </li>
+                    @for (var p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == page ? "active" : string.Empty)"><a class="page-link" href="@PageUrl(p)">@p</a></li>
+                    }
+                    <li class="page-item @(page >= totalPages ? "disabled" : string.Empty)">
+                        <a class="page-link" href="@PageUrl(Math.Min(totalPages, page + 1))" aria-label="Trang sau">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>
+
+<div id="uploadModalContainer"></div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/student-proofs.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/student.proofs.js" asp-append-version="true"></script>
+}

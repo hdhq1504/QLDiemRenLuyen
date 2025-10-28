@@ -10,6 +10,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<StudentActivitiesRepository>();
 builder.Services.AddScoped<StudentScoresRepository>();
 builder.Services.AddScoped<StudentProfileRepository>();
+builder.Services.AddScoped<StudentProofsRepository>();
 
 builder.Services.AddControllersWithViews();
 

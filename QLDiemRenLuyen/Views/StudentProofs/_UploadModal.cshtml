@@ -1,0 +1,44 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.ProofUploadModalVm
+
+<div class="modal fade" id="uploadProofModal" tabindex="-1" aria-labelledby="uploadProofModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadProofModalLabel">Tải lên minh chứng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form id="uploadProofForm" enctype="multipart/form-data">
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="uploadActivityId" class="form-label">Hoạt động</label>
+                        <select id="uploadActivityId" name="activityId" class="form-select" required>
+                            <option value="">-- Chọn hoạt động --</option>
+                            @foreach (var act in Model.Activities)
+                            {
+                                <option value="@act.Id" selected="@(Model.SelectedActivityId.HasValue && Model.SelectedActivityId.Value == act.Id)">@act.Title</option>
+                            }
+                        </select>
+                        <div class="form-text">Chỉ hiển thị hoạt động bạn đã đăng ký.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="proofFile" class="form-label">Chọn tệp minh chứng</label>
+                        <input type="file" class="form-control" id="proofFile" name="file" accept=".pdf,.png,.jpg,.jpeg" required />
+                        <div class="form-text">Dung lượng tối đa 5MB, định dạng PDF/JPG/PNG.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="proofNote" class="form-label">Ghi chú (tuỳ chọn)</label>
+                        <textarea id="proofNote" name="note" class="form-control" rows="3" maxlength="300" placeholder="Thông tin mô tả ngắn gọn"></textarea>
+                        <div class="form-text">Tối đa 300 ký tự.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa-solid fa-cloud-arrow-up me-1"></i>Tải lên
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
