@@ -39,4 +39,13 @@ namespace QLDiemRenLuyen.Models.ViewModels
         public int RegisteredCount { get; set; }
         public string StudentState { get; set; } = "NOT_REGISTERED";
     }
+
+    public class ActivityReminderDto
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public DateTime StartAt { get; set; }
+        public DateTime EndAt { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
 }

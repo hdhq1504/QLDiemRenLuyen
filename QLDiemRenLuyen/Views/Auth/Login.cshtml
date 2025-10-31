@@ -1,6 +1,7 @@
 ﻿@model LoginVM
 @{
     ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
     var returnUrl = ViewData["ReturnUrl"] as string;
 }
 
@@ -71,15 +72,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-<style>
-    .auth-page {
-        background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(0, 102, 204, 0.05));
-        min-height: 100vh;
-    }
-
-    .auth-card {
-        max-width: 480px;
-        border-top: 4px solid #0066CC;
-    }
-</style>

@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data;
 using QLDiemRenLuyen.Models.ViewModels;
+using QLDiemRenLuyen.Services;
 
 namespace QLDiemRenLuyen.Controllers
 {
@@ -18,11 +21,13 @@ namespace QLDiemRenLuyen.Controllers
     {
         private readonly StudentActivitiesRepository _repository;
         private readonly ILogger<StudentActivitiesController> _logger;
+        private readonly IEmailSender _emailSender;
 
-        public StudentActivitiesController(StudentActivitiesRepository repository, ILogger<StudentActivitiesController> logger)
+        public StudentActivitiesController(StudentActivitiesRepository repository, ILogger<StudentActivitiesController> logger, IEmailSender emailSender)
         {
             _repository = repository;
             _logger = logger;
+            _emailSender = emailSender;
         }
 
         [HttpGet("")]
@@ -117,10 +122,37 @@ namespace QLDiemRenLuyen.Controllers
 
             _logger.LogInformation("Sinh viên {Student} đăng ký hoạt động {Activity} thành công", studentId, id);
             var updated = await _repository.GetActivityAsync(id, studentId);
+            var reminderSource = updated ?? activity;
+            var emailSent = false;
+            var recipient = User.FindFirstValue(ClaimTypes.Email);
+
+            if (!string.IsNullOrWhiteSpace(recipient) && reminderSource != null)
+            {
+                var subject = $"[QLDRL] Nhắc nhở hoạt động {reminderSource.Title}";
+                var bodyBuilder = new StringBuilder();
+                bodyBuilder.Append($"<p>Chào {HtmlEncoder.Default.Encode(User.Identity?.Name ?? "bạn")},</p>");
+                bodyBuilder.Append("<p>Bạn vừa đăng ký tham gia hoạt động:</p><ul>");
+                bodyBuilder.Append($"<li><strong>{HtmlEncoder.Default.Encode(reminderSource.Title)}</strong></li>");
+                bodyBuilder.Append($"<li>Thời gian: {reminderSource.StartAt:dd/MM/yyyy HH:mm} - {reminderSource.EndAt:dd/MM/yyyy HH:mm}</li>");
+                bodyBuilder.Append("</ul>");
+                bodyBuilder.Append("<p>Vui lòng có mặt đúng giờ để hoàn thành điểm rèn luyện.</p>");
+                bodyBuilder.Append("<p>Trân trọng.</p>");
+
+                try
+                {
+                    await _emailSender.SendAsync(recipient, subject, bodyBuilder.ToString(), HttpContext.RequestAborted);
+                    emailSent = true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Không thể gửi email xác nhận đăng ký hoạt động {ActivityId} cho {Email}", id, recipient);
+                }
+            }
+
             return Json(new
             {
                 ok = true,
-                message = "Đăng ký thành công!",
+                message = emailSent ? "Đăng ký thành công! Đã gửi email nhắc nhở." : "Đăng ký thành công!",
                 activity = updated == null ? null : new
                 {
                     id = updated.Id,
@@ -186,6 +218,60 @@ namespace QLDiemRenLuyen.Controllers
                     maxSeats = updated.MaxSeats
                 }
             });
+        }
+
+        [HttpPost("send-reminders")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendReminders()
+        {
+            var studentId = GetStudentId();
+            if (string.IsNullOrEmpty(studentId))
+            {
+                return Unauthorized();
+            }
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return Json(new { ok = false, message = "Không tìm thấy email để gửi nhắc nhở.", toastType = "danger" });
+            }
+
+            var now = DateTime.Now;
+            var windowEnd = now.AddDays(7);
+            var upcoming = await _repository.GetUpcomingRegistrationsAsync(studentId, now, windowEnd);
+            if (upcoming.Count == 0)
+            {
+                return Json(new { ok = true, success = false, toastType = "warning", message = "Hiện chưa có hoạt động nào trong 7 ngày tới." });
+            }
+
+            var body = new StringBuilder();
+            body.Append($"<p>Chào {HtmlEncoder.Default.Encode(User.Identity?.Name ?? "bạn")},</p>");
+            body.Append("<p>Đây là các hoạt động bạn đã đăng ký sẽ diễn ra sắp tới:</p><ul>");
+            foreach (var item in upcoming)
+            {
+                body.Append("<li><strong>");
+                body.Append(HtmlEncoder.Default.Encode(item.Title));
+                body.Append("</strong> - ");
+                body.Append(item.StartAt.ToString("dd/MM/yyyy HH:mm"));
+                body.Append(" đến ");
+                body.Append(item.EndAt.ToString("dd/MM/yyyy HH:mm"));
+                body.Append("</li>");
+            }
+            body.Append("</ul>");
+            body.Append("<p>Vui lòng sắp xếp thời gian để tham gia đầy đủ.</p>");
+            body.Append("<p>Trân trọng.</p>");
+
+            try
+            {
+                await _emailSender.SendAsync(email, "[QLDRL] Nhắc nhở hoạt động sắp diễn ra", body.ToString(), HttpContext.RequestAborted);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Không thể gửi email nhắc nhở hoạt động cho {Email}", email);
+                return Json(new { ok = false, message = "Không thể gửi email nhắc nhở lúc này.", toastType = "danger" });
+            }
+
+            return Json(new { ok = true, message = "Đã gửi email nhắc nhở tới hộp thư của bạn.", toastType = "success" });
         }
 
         private string? GetStudentId()

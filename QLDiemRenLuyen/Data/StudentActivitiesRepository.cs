@@ -201,7 +201,7 @@ namespace QLDiemRenLuyen.Data
 
         public async Task<bool> UnregisterAsync(string activityId, string studentId)
         {
-            const string sql = @"DELETE FROM REGISTRATIONS 
+            const string sql = @"DELETE FROM REGISTRATIONS
                                  WHERE ACTIVITY_ID = :aid AND STUDENT_ID = :sid AND STATUS = 'REGISTERED'";
 
             var affected = await _db.ExecuteAsync(sql, new[]
@@ -211,6 +211,41 @@ namespace QLDiemRenLuyen.Data
             });
 
             return affected > 0;
+        }
+
+        public async Task<IReadOnlyList<ActivityReminderDto>> GetUpcomingRegistrationsAsync(string studentId, DateTime fromUtc, DateTime toUtc)
+        {
+            const string sql = @"SELECT a.ID, a.TITLE, a.START_AT, a.END_AT, a.STATUS
+                                    FROM ACTIVITIES a
+                                    JOIN REGISTRATIONS r ON r.ACTIVITY_ID = a.ID
+                                   WHERE r.STUDENT_ID = :sid
+                                     AND r.STATUS IN ('REGISTERED', 'CHECKED_IN')
+                                     AND a.START_AT BETWEEN :fromDate AND :toDate
+                                ORDER BY a.START_AT";
+
+            var result = new List<ActivityReminderDto>();
+
+            await using var conn = (OracleConnection)_db.CreateConnection();
+            await conn.OpenAsync();
+            await using var cmd = new OracleCommand(sql, conn) { BindByName = true };
+            cmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input));
+            cmd.Parameters.Add(new OracleParameter("fromDate", OracleDbType.Date, fromUtc, ParameterDirection.Input));
+            cmd.Parameters.Add(new OracleParameter("toDate", OracleDbType.Date, toUtc, ParameterDirection.Input));
+
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                result.Add(new ActivityReminderDto
+                {
+                    Id = reader.IsDBNull(0) ? string.Empty : reader.GetString(0),
+                    Title = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                    StartAt = reader.IsDBNull(2) ? DateTime.MinValue : reader.GetDateTime(2),
+                    EndAt = reader.IsDBNull(3) ? DateTime.MinValue : reader.GetDateTime(3),
+                    Status = reader.IsDBNull(4) ? string.Empty : reader.GetString(4)
+                });
+            }
+
+            return result;
         }
 
         private static OracleParameter CreateNullableStringParameter(string name, string? value)

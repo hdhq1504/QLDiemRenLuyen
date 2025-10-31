@@ -32,7 +32,7 @@
     <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
 
     <form method="get" class="row g-2 align-items-end mb-3">
-        <div class="col-md-4">
+        <div class="col-md-4 col-lg-3">
             <label for="termId" class="form-label">Học kỳ</label>
             <select id="termId" name="termId" class="form-select">
                 <option value="">-- Tất cả --</option>
@@ -44,12 +44,17 @@
                 }
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-8 col-lg-5">
             <label for="q" class="form-label">Tìm kiếm</label>
             <input id="q" name="q" value="@(Model.Keyword ?? "")" class="form-control" placeholder="Nhập từ khóa tiêu đề/mô tả..." />
         </div>
-        <div class="col-md-2 d-grid">
+        <div class="col-md-6 col-lg-2 d-grid">
             <button type="submit" class="btn btn-primary"><i class="fa fa-search me-1"></i>Lọc</button>
+        </div>
+        <div class="col-md-6 col-lg-2 d-grid">
+            <button type="button" class="btn btn-outline-primary btn-send-reminders" data-action-url="/student/activities/send-reminders">
+                <i class="fa fa-envelope me-1"></i> Gửi nhắc nhở
+            </button>
         </div>
     </form>
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using QLDiemRenLuyen.Data;
+using QLDiemRenLuyen.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddScoped<StudentFeedbackRepository>();
 builder.Services.AddScoped<StudentNotificationsRepository>();
 
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>();
 
 // 5.2) Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

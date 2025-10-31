@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
+using Microsoft.Extensions.Logging;
 
 namespace QLDiemRenLuyen.Controllers
 {
@@ -22,10 +24,14 @@ namespace QLDiemRenLuyen.Controllers
         private static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
 
         private readonly UserRepository _repo;
+        private readonly IEmailSender _emailSender;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(UserRepository repo)
+        public AccountController(UserRepository repo, IEmailSender emailSender, ILogger<AccountController> logger)
         {
             _repo = repo;
+            _emailSender = emailSender;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -252,12 +258,35 @@ namespace QLDiemRenLuyen.Controllers
                 return Redirect(returnUrl ?? Request.Headers["Referer"].ToString() ?? Url.Content("~/"));
             }
 
+            if (PasswordHasher.Verify(vm.NewPassword, user.PasswordSalt, user.PasswordHash))
+            {
+                TempData["ChangePasswordError"] = "Mật khẩu mới phải khác mật khẩu hiện tại.";
+                return Redirect(returnUrl ?? Request.Headers["Referer"].ToString() ?? Url.Content("~/"));
+            }
+
             // Lưu lại mật khẩu mới và ghi nhận audit
             var (hash, salt) = PasswordHasher.HashPassword(vm.NewPassword);
             await _repo.UpdatePasswordAsync(user.MaND, hash, salt);
             await _repo.AuditAsync(email, "PASSWORD_CHANGED", GetIp(), GetUA());
 
             TempData["ChangePasswordSuccess"] = "Đổi mật khẩu thành công.";
+
+            var subject = "[QLDRL] Xác nhận đổi mật khẩu";
+            var body = $"<p>Chào {HtmlEncoder.Default.Encode(user.FullName)},</p>" +
+                       "<p>Mật khẩu tài khoản QL Điểm rèn luyện của bạn vừa được thay đổi thành công vào " +
+                       DateTime.Now.ToString("dd/MM/yyyy HH:mm") +
+                       ".</p><p>Nếu không phải bạn thực hiện, vui lòng liên hệ quản trị viên để được hỗ trợ.</p>" +
+                       "<p>Trân trọng.</p>";
+
+            try
+            {
+                await _emailSender.SendAsync(email, subject, body, HttpContext.RequestAborted);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Không thể gửi email thông báo đổi mật khẩu cho {Email}", email);
+            }
+
             return Redirect(returnUrl ?? Request.Headers["Referer"].ToString() ?? Url.Content("~/"));
         }
 

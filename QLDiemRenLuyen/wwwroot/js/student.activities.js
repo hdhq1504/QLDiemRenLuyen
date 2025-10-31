@@ -1,5 +1,4 @@
-﻿// Script xử lý trang danh sách hoạt động sinh viên.
-(function () {
+﻿(function () {
     document.addEventListener('DOMContentLoaded', function () {
         const page = document.getElementById('student-activities-page');
         if (!page) {
@@ -32,12 +31,15 @@
             return stateClassMap[key] || 'badge bg-light text-muted student-state-badge';
         }
 
-        function showToast(message, success) {
+        function showToast(message, variant = 'success') {
             if (!toastArea) {
                 return;
             }
             const toast = document.createElement('div');
-            toast.className = `toast align-items-center text-bg-${success ? 'success' : 'danger'} border-0 shadow`;
+            const normalized = (variant || 'success').toLowerCase();
+            const allowed = ['success', 'danger', 'warning', 'info'];
+            const tone = allowed.includes(normalized) ? normalized : 'success';
+            toast.className = `toast align-items-center text-bg-${tone} border-0 shadow`;
             toast.setAttribute('role', 'alert');
             toast.setAttribute('aria-live', 'assertive');
             toast.setAttribute('aria-atomic', 'true');
@@ -186,10 +188,12 @@
                     throw new Error(`HTTP ${response.status}`);
                 }
                 const data = await response.json();
+                const successState = typeof data.success === 'boolean' ? data.success : !!data.ok;
+                const toastVariant = (data.toastType || (successState ? 'success' : 'danger')).toLowerCase();
                 if (!data.ok) {
-                    showToast(data.message || 'Có lỗi xảy ra.', false);
+                    showToast(data.message || 'Có lỗi xảy ra.', toastVariant);
                 } else {
-                    showToast(data.message || 'Thành công.', true);
+                    showToast(data.message || 'Thành công.', toastVariant);
                     if (data.activity) {
                         updateCard(data.activity);
                         updateModalActivity(data.activity);
@@ -197,7 +201,7 @@
                 }
             } catch (err) {
                 console.error(err);
-                showToast('Không thể kết nối máy chủ.', false);
+                showToast('Không thể kết nối máy chủ.', 'danger');
             } finally {
                 if (button) {
                     button.classList.remove('disabled');
@@ -217,6 +221,12 @@
             if (unregisterBtn) {
                 evt.preventDefault();
                 postAction(unregisterBtn.dataset.actionUrl, unregisterBtn);
+                return;
+            }
+            const reminderBtn = evt.target.closest('.btn-send-reminders');
+            if (reminderBtn) {
+                evt.preventDefault();
+                postAction(reminderBtn.dataset.actionUrl, reminderBtn);
             }
         });
 

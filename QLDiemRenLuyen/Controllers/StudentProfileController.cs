@@ -74,7 +74,22 @@ namespace QLDiemRenLuyen.Controllers
             var profile = await _repository.GetAsync(studentId);
             if (profile == null)
             {
-                return NotFound();
+                var classes = await _repository.GetClassesAsync();
+                var departments = await _repository.GetDepartmentsAsync();
+                profile = new StudentProfileVm
+                {
+                    StudentId = studentId,
+                    Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+                    FullName = User.Identity?.Name ?? string.Empty,
+                    RoleName = User.FindFirstValue(ClaimTypes.Role) ?? "STUDENT",
+                    Classes = classes,
+                    Departments = departments
+                };
+            }
+            else
+            {
+                profile.Classes ??= await _repository.GetClassesAsync();
+                profile.Departments ??= await _repository.GetDepartmentsAsync();
             }
 
             return PartialView("_EditModal", profile);
@@ -126,10 +141,17 @@ namespace QLDiemRenLuyen.Controllers
             }
 
             var before = await _repository.GetAsync(studentId);
-            if (before == null)
+            var classes = before?.Classes ?? await _repository.GetClassesAsync();
+            var departments = before?.Departments ?? await _repository.GetDepartmentsAsync();
+            var baseline = before ?? new StudentProfileVm
             {
-                return NotFound(new { ok = false, message = "Không tìm thấy hồ sơ" });
-            }
+                StudentId = studentId,
+                Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+                FullName = User.Identity?.Name ?? string.Empty,
+                RoleName = User.FindFirstValue(ClaimTypes.Role) ?? "STUDENT",
+                Classes = classes,
+                Departments = departments
+            };
 
             var success = await _repository.UpdateAsync(input, studentId);
             if (!success)
@@ -140,25 +162,43 @@ namespace QLDiemRenLuyen.Controllers
             var changedFields = CalculateChangedFields(before, input);
             await _repository.WriteAuditAsync(studentId, "PROFILE_UPDATE", GetClientIp(), GetUserAgent(), changedFields);
 
-            var refreshed = await _repository.GetAsync(studentId) ?? before;
+            var refreshed = await _repository.GetAsync(studentId);
+            var responseProfile = refreshed ?? new StudentProfileVm
+            {
+                StudentId = baseline.StudentId,
+                Email = baseline.Email,
+                FullName = input.FullName,
+                RoleName = baseline.RoleName,
+                StudentCode = input.StudentCode,
+                ClassId = input.ClassId,
+                DepartmentId = input.DepartmentId,
+                Dob = input.Dob,
+                Gender = input.Gender,
+                Phone = input.Phone,
+                Address = input.Address,
+                ClassName = classes.FirstOrDefault(c => c.Id == input.ClassId)?.Name,
+                DepartmentName = departments.FirstOrDefault(d => d.Id == input.DepartmentId)?.Name,
+                Classes = classes,
+                Departments = departments
+            };
             return Json(new
             {
                 ok = true,
                 message = "Cập nhật hồ sơ thành công",
                 profile = new
                 {
-                    fullName = refreshed.FullName,
-                    email = refreshed.Email,
-                    roleName = refreshed.RoleName,
-                    studentCode = refreshed.StudentCode,
-                    classId = refreshed.ClassId,
-                    className = refreshed.ClassName,
-                    departmentId = refreshed.DepartmentId,
-                    departmentName = refreshed.DepartmentName,
-                    dob = refreshed.Dob?.ToString("yyyy-MM-dd"),
-                    gender = refreshed.Gender,
-                    phone = refreshed.Phone,
-                    address = refreshed.Address
+                    fullName = responseProfile.FullName,
+                    email = responseProfile.Email,
+                    roleName = responseProfile.RoleName,
+                    studentCode = responseProfile.StudentCode,
+                    classId = responseProfile.ClassId,
+                    className = responseProfile.ClassName,
+                    departmentId = responseProfile.DepartmentId,
+                    departmentName = responseProfile.DepartmentName,
+                    dob = responseProfile.Dob?.ToString("yyyy-MM-dd"),
+                    gender = responseProfile.Gender,
+                    phone = responseProfile.Phone,
+                    address = responseProfile.Address
                 }
             });
         }
@@ -247,8 +287,9 @@ namespace QLDiemRenLuyen.Controllers
         /// <summary>
         /// So sánh dữ liệu trước và sau để log audit.
         /// </summary>
-        private static IEnumerable<string> CalculateChangedFields(StudentProfileVm before, StudentProfileEditVm after)
+        private static IEnumerable<string> CalculateChangedFields(StudentProfileVm? before, StudentProfileEditVm after)
         {
+            before ??= new StudentProfileVm();
             var changed = new List<string>();
 
             if (!string.Equals(before.FullName?.Trim(), after.FullName?.Trim(), StringComparison.Ordinal)) changed.Add("fullName");

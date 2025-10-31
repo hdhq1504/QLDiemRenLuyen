@@ -1,5 +1,6 @@
 ﻿@model RegisterVM
 @{
+    Layout = "~/Views/Shared/_AuthLayout.cshtml";
     ViewData["Title"] = "Đăng ký";
 }
 
@@ -72,15 +73,3 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
-
-<style>
-    .auth-page {
-        background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(0, 102, 204, 0.05));
-        min-height: 100vh;
-    }
-
-    .auth-card {
-        max-width: 540px;
-        border-top: 4px solid #0066CC;
-    }
-</style>
