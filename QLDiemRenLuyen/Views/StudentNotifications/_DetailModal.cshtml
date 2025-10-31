@@ -1,0 +1,32 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.NotificationDetailVm
+@using System.Globalization
+@{
+    var vi = new CultureInfo("vi-VN");
+    var createdText = Model.CreatedAt == DateTime.MinValue ? "-" : Model.CreatedAt.ToString("dd/MM/yyyy HH:mm", vi);
+}
+
+<div class="modal-header">
+    <h5 class="modal-title" id="notificationDetailModalLabel">@Model.Title</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+</div>
+<div class="modal-body" data-notification-id="@Model.Id" data-is-read="@(Model.IsRead ? "1" : "0")">
+    <div class="text-muted mb-3"><i class="fa fa-clock me-2"></i>@createdText</div>
+    <div class="notification-content" data-content="html">
+        @Html.Raw(Model.ContentHtml)
+    </div>
+</div>
+<div class="modal-footer">
+    @if (!Model.IsRead)
+    {
+        <button type="button" class="btn btn-success btn-mark-read" data-action-url="/student/notifications/mark-read/@Model.Id" data-notification-id="@Model.Id">
+            <i class="fa fa-check me-2"></i>Đánh dấu đã đọc
+        </button>
+    }
+    else
+    {
+        <button type="button" class="btn btn-outline-warning btn-mark-unread" data-action-url="/student/notifications/mark-unread/@Model.Id" data-notification-id="@Model.Id">
+            <i class="fa fa-undo me-2"></i>Để lại chưa đọc
+        </button>
+    }
+    <button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>
+</div>

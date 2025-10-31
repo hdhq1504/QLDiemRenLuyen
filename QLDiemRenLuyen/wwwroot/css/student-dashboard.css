@@ -1,6 +1,5 @@
 ﻿.student-dashboard {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #E0E2E4;
     min-height: calc(100vh - 120px);
 }
 

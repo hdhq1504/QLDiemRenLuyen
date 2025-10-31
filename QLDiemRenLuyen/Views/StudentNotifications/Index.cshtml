@@ -1,0 +1,146 @@
+﻿@model QLDiemRenLuyen.Models.ViewModels.StudentNotificationsVm
+@using System.Globalization
+@using System.Linq
+@{
+    ViewData["Title"] = "Thông báo";
+    Layout = "~/Views/Shared/_LayoutStudent.cshtml";
+    var vi = new CultureInfo("vi-VN");
+
+    string RowClass(bool isRead) => isRead ? "notification-row" : "notification-row notification-row-unread";
+    string StatusBadge(bool isRead) => isRead ? "badge bg-secondary notification-status" : "badge bg-warning text-dark notification-status";
+    string StatusText(bool isRead) => isRead ? "Đã đọc" : "Chưa đọc";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/student-notifications.css" asp-append-version="true" />
+}
+
+<div id="student-notifications-page" class="container-fluid py-3">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-md-between gap-2 mb-4">
+        <h2 class="mb-0">Thông báo</h2>
+        <span class="badge bg-info text-dark fs-6" id="unreadBadge">Chưa đọc: <span id="unreadCount">@Model.UnreadCount</span></span>
+    </div>
+
+    <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
+
+    <form id="notificationFilterForm" method="get" class="row g-2 align-items-end mb-3">
+        <div class="col-md-6 col-lg-5">
+            <label for="q" class="form-label">Từ khóa</label>
+            <input id="q" name="q" value="@(Model.Keyword ?? string.Empty)" class="form-control" placeholder="Nhập tiêu đề thông báo" />
+        </div>
+        <div class="col-md-3 col-lg-3">
+            <label for="status" class="form-label">Trạng thái</label>
+            <select id="status" name="status" class="form-select">
+                <option value="all" selected="@(Model.Status == "all")">Tất cả</option>
+                <option value="unread" selected="@(Model.Status == "unread")">Chưa đọc</option>
+                <option value="read" selected="@(Model.Status == "read")">Đã đọc</option>
+            </select>
+        </div>
+        <div class="col-md-3 col-lg-2 d-grid">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-search me-2"></i>Lọc</button>
+        </div>
+        <div class="col-12 col-lg-2 d-grid">
+            <button type="button" id="btnMarkAllRead" class="btn btn-outline-success"><i class="fa fa-check-double me-2"></i>Đánh dấu tất cả đã đọc</button>
+        </div>
+    </form>
+
+    <form id="notificationsAntiforgeryForm" method="post" class="d-none">
+        @Html.AntiForgeryToken()
+    </form>
+
+    @if (Model.Items.Data == null || !Model.Items.Data.Any())
+    {
+        <div class="alert alert-info"><i class="fa fa-info-circle me-2"></i>Không có thông báo nào phù hợp.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table align-middle table-hover notification-table">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Tiêu đề</th>
+                        <th scope="col" class="text-nowrap">Ngày</th>
+                        <th scope="col" class="text-center">Trạng thái</th>
+                        <th scope="col" class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items.Data)
+                    {
+                        var createdText = item.CreatedAt == DateTime.MinValue ? "-" : item.CreatedAt.ToString("dd/MM/yyyy HH:mm", vi);
+                        <tr class="@RowClass(item.IsRead)" data-notification-id="@item.Id" data-is-read="@(item.IsRead ? "1" : "0")">
+                            <td>
+                                <div class="notification-title">@item.Title</div>
+                            </td>
+                            <td class="text-nowrap">
+                                <i class="fa fa-clock me-1 text-muted"></i>@createdText
+                            </td>
+                            <td class="text-center">
+                                <span class="@StatusBadge(item.IsRead)" data-status="@(item.IsRead ? "read" : "unread")">@StatusText(item.IsRead)</span>
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-view-notification" data-detail-url="/student/notifications/detail/@item.Id" data-notification-id="@item.Id" data-bs-toggle="modal" data-bs-target="#notificationDetailModal">
+                                        <i class="fa fa-eye"></i>
+                                    </button>
+                                    @if (item.IsRead)
+                                    {
+                                        <button type="button" class="btn btn-outline-warning btn-mark-unread" data-action-url="/student/notifications/mark-unread/@item.Id" data-notification-id="@item.Id">
+                                            <i class="fa fa-undo"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-outline-success btn-mark-read" data-action-url="/student/notifications/mark-read/@item.Id" data-notification-id="@item.Id">
+                                            <i class="fa fa-check"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.Items.TotalPages > 1)
+        {
+            var pageIndex = Model.Items.Page;
+            var totalPages = Model.Items.TotalPages;
+            Func<int, string> pageUrl = p => Url.Action("Index", new { q = Model.Keyword, status = Model.Status, page = p, pageSize = Model.Items.PageSize }) ?? $"?page={p}";
+
+            <nav class="mt-3" aria-label="Phân trang">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(pageIndex <= 1 ? "disabled" : string.Empty)">
+                        <a class="page-link" href="@pageUrl(Math.Max(1, pageIndex - 1))" aria-label="Trang trước">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @for (var p = 1; p <= totalPages; p++)
+                    {
+                        <li class="page-item @(p == pageIndex ? "active" : string.Empty)">
+                            <a class="page-link" href="@pageUrl(p)">@p</a>
+                        </li>
+                    }
+                    <li class="page-item @(pageIndex >= totalPages ? "disabled" : string.Empty)">
+                        <a class="page-link" href="@pageUrl(Math.Min(totalPages, pageIndex + 1))" aria-label="Trang sau">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>
+
+<div class="modal fade" id="notificationDetailModal" tabindex="-1" aria-labelledby="notificationDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div id="notificationDetailModalContent" class="modal-content">
+            @* Nội dung modal sẽ được load động bằng fetch *@
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/student.notifications.js" asp-append-version="true"></script>
+}
