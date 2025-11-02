@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using QLDiemRenLuyen.Models.ViewModels;
+using System.Net.NetworkInformation;
+using QLDiemRenLuyen.Student.Models.ViewModels;
 
 namespace QLDiemRenLuyen.Student.Models.ViewModels
 {
