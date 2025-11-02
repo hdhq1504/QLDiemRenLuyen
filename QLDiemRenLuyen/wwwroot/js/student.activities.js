@@ -13,7 +13,7 @@
 
         const statusClassMap = {
             OPEN: 'badge bg-success status-badge',
-            FULL: 'badge bg-warning text-dark status-badge'
+            CANCELLED: 'badge bg-danger status-badge'
         };
 
         const stateClassMap = {
@@ -103,7 +103,9 @@
                 } else if (status === 'OPEN' && state === 'REGISTERED') {
                     html += `<button type="button" class="btn btn-outline-danger w-100 btn-unregister" data-action-url="/student/activities/${activity.id}/unregister"><i class="fa fa-times me-1"></i>Hủy đăng ký</button>`;
                 } else {
-                    html += '<button type="button" class="btn btn-secondary w-100" disabled><i class="fa fa-lock me-1"></i>Đã đóng</button>';
+                    const disabledLabel = status === 'CANCELLED' ? 'Hoạt động đã huỷ' : 'Đã đóng';
+                    const disabledIcon = status === 'CANCELLED' ? 'fa-ban' : 'fa-lock';
+                    html += `<button type="button" class="btn btn-secondary w-100" disabled><i class="fa ${disabledIcon} me-1"></i>${disabledLabel}</button>`;
                 }
                 html += `<button type="button" class="btn btn-light border btn-detail" data-detail-url="${detailUrl}" data-bs-toggle="modal" data-bs-target="#activityDetailModal"><i class="fa fa-info-circle me-1"></i>Chi tiết</button>`;
                 actionRow.innerHTML = html;
@@ -158,7 +160,9 @@
                 } else if (status === 'OPEN' && state === 'REGISTERED') {
                     footerHtml += `<button type="button" class="btn btn-outline-danger btn-unregister" data-action-url="/student/activities/${activity.id}/unregister"><i class="fa fa-times me-2"></i>Hủy đăng ký</button>`;
                 } else {
-                    footerHtml += '<button type="button" class="btn btn-secondary" disabled><i class="fa fa-lock me-2"></i>Hoạt động đã đóng</button>';
+                    const disabledLabel = status === 'CANCELLED' ? 'Hoạt động đã huỷ' : 'Hoạt động đã đóng';
+                    const disabledIcon = status === 'CANCELLED' ? 'fa-ban' : 'fa-lock';
+                    footerHtml += `<button type="button" class="btn btn-secondary" disabled><i class="fa ${disabledIcon} me-2"></i>${disabledLabel}</button>`;
                 }
                 footerHtml += '<button type="button" class="btn btn-light border" data-bs-dismiss="modal">Đóng</button>';
                 footer.innerHTML = footerHtml;

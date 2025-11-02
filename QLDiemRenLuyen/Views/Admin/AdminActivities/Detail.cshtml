@@ -21,10 +21,10 @@
                 <p class="mb-2"><strong>Học kỳ:</strong> @Model.TermName</p>
                 <p class="mb-2"><strong>Tiêu chí:</strong> @Model.CriterionName</p>
                 <p class="mb-2"><strong>Thời gian:</strong> @(Model.StartAt?.ToString("dd/MM/yyyy HH:mm") ?? "-") - @(Model.EndAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</p>
-                <p class="mb-2"><strong>Địa điểm:</strong> @Model.Location</p>
+                <p class="mb-2"><strong>Địa điểm:</strong> @(string.IsNullOrWhiteSpace(Model.Location) ? "Chưa cập nhật" : Model.Location)</p>
                 <p class="mb-2"><strong>Số lượng tối đa:</strong> @(Model.MaxSeats?.ToString() ?? "Không giới hạn")</p>
                 <p class="mb-2"><strong>Điểm:</strong> @(Model.Points?.ToString("0.##") ?? "-")</p>
-                <p class="mb-2"><strong>Người phụ trách:</strong> @Model.OrganizerId</p>
+                <p class="mb-2"><strong>Người phụ trách:</strong> @(Model.OrganizerName ?? Model.OrganizerId ?? "-")</p>
                 <div class="mt-3">
                     <strong>Mô tả</strong>
                     <div class="border rounded p-3 bg-light">@Html.Raw(Model.Description?.Replace("\n", "<br />"))</div>
@@ -89,7 +89,7 @@
         {
             "OPEN" => "badge badge-status-open",
             "CLOSED" => "badge badge-status-closed",
-            "FULL" => "badge badge-status-full",
+            "CANCELLED" => "badge badge-status-cancelled",
             _ => "badge bg-secondary"
         };
     }

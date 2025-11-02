@@ -38,8 +38,9 @@ namespace QLDiemRenLuyen.Admin.Models.ViewModels
         public string Status { get; set; } = string.Empty;
         public string ApprovalStatus { get; set; } = string.Empty;
         public string? OrganizerName { get; set; }
-        public int? Seats { get; set; }
+        public int? MaxSeats { get; set; }
         public int RegisteredCount { get; set; }
+        public string? Location { get; set; }
         public decimal? Points { get; set; }
     }
 
@@ -68,5 +69,6 @@ namespace QLDiemRenLuyen.Admin.Models.ViewModels
         public DateTime? ApprovedAt { get; set; }
         public int RegisteredCount { get; set; }
         public int CheckinCount { get; set; }
+        public string? OrganizerName { get; set; }
     }
 }

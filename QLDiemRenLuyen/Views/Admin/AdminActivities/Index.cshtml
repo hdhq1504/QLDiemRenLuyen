@@ -2,7 +2,7 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     ViewData["Title"] = "Hoạt động";
-    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+    var token = Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken;
 }
 
 <section class="mb-4">
@@ -40,7 +40,7 @@
                 <option value="ALL" selected="@(Model.StatusFilter == "ALL")">Tất cả</option>
                 <option value="OPEN" selected="@(Model.StatusFilter == "OPEN")">Đang mở</option>
                 <option value="CLOSED" selected="@(Model.StatusFilter == "CLOSED")">Đã đóng</option>
-                <option value="FULL" selected="@(Model.StatusFilter == "FULL")">Đủ số lượng</option>
+                <option value="CANCELLED" selected="@(Model.StatusFilter == "CANCELLED")">Đã huỷ</option>
             </select>
         </div>
         <div class="col-12 d-flex justify-content-end">
@@ -71,7 +71,9 @@
                             <p class="text-muted small mb-2"><i class="fa-solid fa-calendar-days me-1"></i>@(activity.StartAt?.ToString("dd/MM/yyyy HH:mm") ?? "-") - @(activity.EndAt?.ToString("dd/MM/yyyy HH:mm") ?? "-")</p>
                             <p class="text-muted small mb-2"><i class="fa-solid fa-graduation-cap me-1"></i>@activity.TermName</p>
                             <p class="text-muted small mb-2"><i class="fa-solid fa-user-tie me-1"></i>@activity.OrganizerName</p>
-                            <p class="text-muted small mb-3"><i class="fa-solid fa-users me-1"></i>@activity.RegisteredCount/@(activity.Seats?.ToString() ?? "∞")</p>
+                            <p class="text-muted small mb-2"><i class="fa-solid fa-location-dot me-1"></i>@(string.IsNullOrWhiteSpace(activity.Location) ? "Chưa cập nhật" : activity.Location)</p>
+                            <p class="text-muted small mb-2"><i class="fa-solid fa-medal me-1"></i>@(activity.Points?.ToString("0.##") ?? "0") điểm</p>
+                            <p class="text-muted small mb-3"><i class="fa-solid fa-users me-1"></i>@activity.RegisteredCount/@(activity.MaxSeats?.ToString() ?? "∞")</p>
                             <div class="mt-auto">
                                 <div class="btn-group w-100 mb-2" role="group">
                                     <a class="btn btn-sm btn-outline-primary" asp-action="Detail" asp-route-id="@activity.Id"><i class="fa-solid fa-eye"></i></a>
@@ -94,11 +96,21 @@
 
         <nav class="mt-4">
             <ul class="pagination justify-content-center">
-                var totalPages = Model.Items.TotalPages > 0 ? Model.Items.TotalPages : 1;
-                for (var i = 1; i <= totalPages; i++)
+                @{
+                    var totalPages = Model.Items.TotalPages > 0 ? Model.Items.TotalPages : 1;
+                }
+                @for (var i = 1; i <= totalPages; i++)
                 {
                     <li class="page-item @(i == Model.Items.Page ? "active" : string.Empty)">
-                        <a class="page-link" href="@Url.Action("Index", new { termId = Model.SelectedTermId, q = Model.Keyword, approval = Model.ApprovalFilter, status = Model.StatusFilter, page = i, pageSize = Model.Items.PageSize })">@i</a>
+                        <a class="page-link"
+                           href="@Url.Action("Index", new {
+                               termId = Model.SelectedTermId,
+                               q = Model.Keyword,
+                               approval = Model.ApprovalFilter,
+                               status = Model.StatusFilter,
+                               page = i,
+                               pageSize = Model.Items.PageSize
+                           })">@i</a>
                     </li>
                 }
             </ul>
@@ -133,7 +145,7 @@
         {
             "OPEN" => "badge badge-status-open",
             "CLOSED" => "badge badge-status-closed",
-            "FULL" => "badge badge-status-full",
+            "CANCELLED" => "badge badge-status-cancelled",
             _ => "badge bg-secondary"
         };
     }

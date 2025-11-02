@@ -103,9 +103,13 @@ namespace QLDiemRenLuyen.Admin.Data
                         a.STATUS,
                         a.APPROVAL_STATUS,
                         a.MAX_SEATS,
+                        a.LOCATION,
                         a.POINTS,
                         (SELECT NVL(u.FULL_NAME, u.MAND) FROM USERS u WHERE u.MAND = a.ORGANIZER_ID) AS ORGANIZER_NAME,
-                        (SELECT COUNT(*) FROM REGISTRATIONS r WHERE r.ACTIVITY_ID = a.ID AND r.STATUS IN ('REGISTERED','CHECKED_IN')) AS REGISTERED_COUNT,
+                        (SELECT COUNT(*)
+                           FROM REGISTRATIONS r
+                          WHERE r.ACTIVITY_ID = a.ID
+                            AND r.STATUS IN ('REGISTERED','CHECKED_IN')) AS REGISTERED_COUNT,
                         ROW_NUMBER() OVER (ORDER BY a.START_AT DESC NULLS LAST, a.CREATED_AT DESC) AS RN
                     FROM ACTIVITIES a
                     LEFT JOIN TERMS t ON t.ID = a.TERM_ID
@@ -276,6 +280,7 @@ namespace QLDiemRenLuyen.Admin.Data
 
         public async Task<bool> SetApprovalAsync(string id, string decision, string adminId, string? reason)
         {
+            reason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();
             string sql;
             switch (decision.ToUpperInvariant())
             {
@@ -313,7 +318,7 @@ namespace QLDiemRenLuyen.Admin.Data
                 {
                     "APPROVED" => "ACT_APPROVE",
                     "REJECTED" => "ACT_REJECT",
-                    _ => "ACT_SUBMIT"
+                    _ => "ACT_EDIT"
                 }, new { activityId = id, decision, reason });
             }
 
@@ -323,7 +328,7 @@ namespace QLDiemRenLuyen.Admin.Data
         public async Task<bool> SetStatusAsync(string id, string status)
         {
             const string sql = @"UPDATE ACTIVITIES SET STATUS = :status WHERE ID = :id";
-            var allowed = status == "OPEN" || status == "CLOSED" || status == "FULL";
+            var allowed = status == "OPEN" || status == "CLOSED";
             if (!allowed)
             {
                 return false;
@@ -349,7 +354,6 @@ namespace QLDiemRenLuyen.Admin.Data
                 {
                     "OPEN" => "ACT_OPEN",
                     "CLOSED" => "ACT_CLOSE",
-                    "FULL" => "ACT_CLOSE",
                     _ => "ACT_UPDATE_STATUS"
                 };
                 await LogAuditAsync(adminId, action, new { activityId = id, status });
@@ -447,9 +451,10 @@ namespace QLDiemRenLuyen.Admin.Data
                 EndAt = reader.IsDBNull(reader.GetOrdinal("END_AT")) ? null : reader.GetDateTime(reader.GetOrdinal("END_AT")),
                 Status = reader.IsDBNull(reader.GetOrdinal("STATUS")) ? string.Empty : reader.GetString(reader.GetOrdinal("STATUS")),
                 ApprovalStatus = reader.IsDBNull(reader.GetOrdinal("APPROVAL_STATUS")) ? "PENDING" : reader.GetString(reader.GetOrdinal("APPROVAL_STATUS")),
-                Seats = reader.IsDBNull(reader.GetOrdinal("MAX_SEATS")) ? null : reader.GetInt32(reader.GetOrdinal("MAX_SEATS")),
+                MaxSeats = reader.IsDBNull(reader.GetOrdinal("MAX_SEATS")) ? null : reader.GetInt32(reader.GetOrdinal("MAX_SEATS")),
                 RegisteredCount = reader.IsDBNull(reader.GetOrdinal("REGISTERED_COUNT")) ? 0 : reader.GetInt32(reader.GetOrdinal("REGISTERED_COUNT")),
                 OrganizerName = reader.IsDBNull(reader.GetOrdinal("ORGANIZER_NAME")) ? null : reader.GetString(reader.GetOrdinal("ORGANIZER_NAME")),
+                Location = reader.IsDBNull(reader.GetOrdinal("LOCATION")) ? null : reader.GetString(reader.GetOrdinal("LOCATION")),
                 Points = reader.IsDBNull(reader.GetOrdinal("POINTS")) ? null : reader.GetDecimal(reader.GetOrdinal("POINTS"))
             };
         }
@@ -475,6 +480,7 @@ namespace QLDiemRenLuyen.Admin.Data
                 ApprovedBy = reader.IsDBNull(reader.GetOrdinal("APPROVED_BY")) ? null : reader.GetString(reader.GetOrdinal("APPROVED_BY")),
                 ApprovedAt = reader.IsDBNull(reader.GetOrdinal("APPROVED_AT")) ? null : reader.GetDateTime(reader.GetOrdinal("APPROVED_AT")),
                 OrganizerId = reader.IsDBNull(reader.GetOrdinal("ORGANIZER_ID")) ? null : reader.GetString(reader.GetOrdinal("ORGANIZER_ID")),
+                OrganizerName = reader.IsDBNull(reader.GetOrdinal("ORGANIZER_NAME")) ? null : reader.GetString(reader.GetOrdinal("ORGANIZER_NAME")),
                 RegisteredCount = reader.IsDBNull(reader.GetOrdinal("REGISTERED_COUNT")) ? 0 : reader.GetInt32(reader.GetOrdinal("REGISTERED_COUNT")),
                 CheckinCount = reader.IsDBNull(reader.GetOrdinal("CHECKIN_COUNT")) ? 0 : reader.GetInt32(reader.GetOrdinal("CHECKIN_COUNT"))
             };

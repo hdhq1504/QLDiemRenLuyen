@@ -11,7 +11,7 @@
         return status switch
         {
             "OPEN" => "badge bg-success status-badge",
-            "FULL" => "badge bg-warning text-dark status-badge",
+            "CANCELLED" => "badge bg-danger status-badge",
             _ => "badge bg-secondary status-badge"
         };
     }
@@ -108,8 +108,10 @@
             }
             else
             {
+                var disabledLabel = status == "CANCELLED" ? "Hoạt động đã huỷ" : "Hoạt động đã đóng";
+                var disabledIcon = status == "CANCELLED" ? "fa-ban" : "fa-lock";
                 <button type="button" class="btn btn-secondary" disabled>
-                    <i class="fa fa-lock me-2"></i>Hoạt động đã đóng
+                    <i class="fa @disabledIcon me-2"></i>@disabledLabel
                 </button>
             }
         }

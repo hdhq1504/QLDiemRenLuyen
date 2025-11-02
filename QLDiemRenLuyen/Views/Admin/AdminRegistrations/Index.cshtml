@@ -2,7 +2,7 @@
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     ViewData["Title"] = "Đăng ký & tham gia";
-    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+    var token = Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken;
 }
 
 @if (string.IsNullOrWhiteSpace(Model.ActivityId))
@@ -91,8 +91,10 @@ else
 
     <nav class="mt-4">
         <ul class="pagination justify-content-center">
-            var totalPages = Model.Items.TotalPages > 0 ? Model.Items.TotalPages : 1;
-            for (var i = 1; i <= totalPages; i++)
+            @{
+                var totalPages = Model.Items.TotalPages > 0 ? Model.Items.TotalPages : 1;
+            }
+            @for (var i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == Model.Items.Page ? "active" : string.Empty)">
                     <a class="page-link" href="@Url.Action("Index", new { activityId = Model.ActivityId, status = Model.Status, q = Model.Keyword, page = i, pageSize = Model.Items.PageSize })">@i</a>

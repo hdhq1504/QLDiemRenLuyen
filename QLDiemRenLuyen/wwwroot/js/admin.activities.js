@@ -45,7 +45,7 @@
     }
 
     handleAction('.js-open', id => `/admin/activities/open/${id}`, 'Đã mở đăng ký.');
-    handleAction('.js-close', id => `/admin/activities/close/${id}`, 'Đã cập nhật trạng thái.');
+    handleAction('.js-close', id => `/admin/activities/close/${id}`, 'Đã đóng đăng ký.');
     handleAction('.js-submit', id => `/admin/activities/submit/${id}`, 'Đã gửi phê duyệt.');
     handleAction('.js-delete', id => `/admin/activities/delete/${id}`, 'Đã xoá hoạt động.');
 

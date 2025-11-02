@@ -8,7 +8,7 @@ namespace QLDiemRenLuyen.ViewModels
         public const string Message = "Mật khẩu phải có tối thiểu 8 ký tự, bao gồm chữ hoa, chữ thường và số.";
     }
 
-    public class RegisterVM
+    public class RegisterVm
     {
         [Required(ErrorMessage = "Email là bắt buộc"), EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
@@ -25,7 +25,7 @@ namespace QLDiemRenLuyen.ViewModels
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 
-    public class LoginVM
+    public class LoginVm
     {
         [Required(ErrorMessage = "Email là bắt buộc"), EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
@@ -36,13 +36,13 @@ namespace QLDiemRenLuyen.ViewModels
         public bool RememberMe { get; set; }
     }
 
-    public class ForgotPasswordVM
+    public class ForgotPasswordVm
     {
         [Required(ErrorMessage = "Email là bắt buộc"), EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; } = string.Empty;
     }
 
-    public class ChangePasswordVM
+    public class ChangePasswordVm
     {
         [Required(ErrorMessage = "Mật khẩu hiện tại là bắt buộc"), DataType(DataType.Password)]
         public string CurrentPassword { get; set; } = string.Empty;

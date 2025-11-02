@@ -11,7 +11,7 @@
         switch ((status ?? "").ToUpperInvariant())
         {
             case "OPEN": return "badge bg-success status-badge";
-            case "FULL": return "badge bg-warning text-dark status-badge";
+            case "CANCELLED": return "badge bg-danger status-badge";
             default: return "badge bg-secondary status-badge";
         }
     }
@@ -140,8 +140,10 @@
                                     }
                                     else
                                     {
+                                        var disabledLabel = status == "CANCELLED" ? "Hoạt động đã huỷ" : "Đã đóng";
+                                        var disabledIcon = status == "CANCELLED" ? "fa-ban" : "fa-lock";
                                         <button type="button" class="btn btn-secondary w-100" disabled>
-                                            <i class="fa fa-lock me-1"></i>Đã đóng
+                                            <i class="fa @disabledIcon me-1"></i>@disabledLabel
                                         </button>
                                         ;
                                     }
