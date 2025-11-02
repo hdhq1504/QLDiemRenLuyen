@@ -1,0 +1,29 @@
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approveModalLabel">Phê duyệt hoạt động</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="approveForm">
+                    <input type="hidden" name="__RequestVerificationToken" value="@token" />
+                    <input type="hidden" name="activityId" />
+                    <div class="mb-3">
+                        <label class="form-label">Lý do (khi từ chối)</label>
+                        <textarea class="form-control" name="reason" rows="3" placeholder="Nhập lý do từ chối (nếu có)"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-danger" id="btnRejectConfirm"><i class="fa-solid fa-xmark me-1"></i>Từ chối</button>
+                <button type="button" class="btn btn-success" id="btnApproveConfirm"><i class="fa-solid fa-check me-1"></i>Phê duyệt</button>
+            </div>
+        </div>
+    </div>
+</div>

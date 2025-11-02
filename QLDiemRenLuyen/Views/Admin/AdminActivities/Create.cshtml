@@ -1,0 +1,81 @@
+﻿@model QLDiemRenLuyen.Admin.Models.ViewModels.ActivityEditVm
+@{
+    ViewData["Title"] = "Thêm hoạt động";
+    var terms = ViewBag.Terms as IEnumerable<QLDiemRenLuyen.Admin.Models.ViewModels.TermDto> ?? Array.Empty<QLDiemRenLuyen.Admin.Models.ViewModels.TermDto>();
+}
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h4 mb-4">Tạo hoạt động mới</h2>
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Tên hoạt động" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="TermId" class="form-label">Học kỳ</label>
+                    <select asp-for="TermId" class="form-select">
+                        <option value="">-- Chọn học kỳ --</option>
+                        @foreach (var term in terms)
+                        {
+                            <option value="@term.Id" selected="@(term.Id == Model.TermId)">@term.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="TermId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CriterionId" class="form-label">Tiêu chí</label>
+                    <input asp-for="CriterionId" class="form-control" placeholder="ID tiêu chí" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="OrganizerId" class="form-label">Người phụ trách</label>
+                    <input asp-for="OrganizerId" class="form-control" />
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả chi tiết"></textarea>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="StartAt" class="form-label">Thời gian bắt đầu</label>
+                    <input asp-for="StartAt" class="form-control" type="datetime-local" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="EndAt" class="form-label">Thời gian kết thúc</label>
+                    <input asp-for="EndAt" class="form-control" type="datetime-local" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Status" class="form-label">Trạng thái đăng ký</label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="OPEN">Mở đăng ký</option>
+                        <option value="CLOSED">Đóng đăng ký</option>
+                        <option value="FULL">Đủ số lượng</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="MaxSeats" class="form-label">Số lượng tối đa</label>
+                    <input asp-for="MaxSeats" class="form-control" type="number" min="0" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="Points" class="form-label">Điểm</label>
+                    <input asp-for="Points" class="form-control" type="number" step="0.5" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Location" class="form-label">Địa điểm</label>
+                    <input asp-for="Location" class="form-control" />
+                </div>
+            </div>
+            <div class="mt-4 d-flex justify-content-end">
+                <a asp-action="Index" class="btn btn-outline-secondary me-2">Huỷ</a>
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk me-1"></i>Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

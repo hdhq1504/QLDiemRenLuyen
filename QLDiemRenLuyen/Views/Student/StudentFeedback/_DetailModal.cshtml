@@ -1,0 +1,84 @@
+﻿@model FeedbackDetailVm
+@using System
+@using System.Globalization
+@using QLDiemRenLuyen.Models.ViewModels.Student
+@{
+    var vi = new CultureInfo("vi-VN");
+
+    string StatusBadge(string? status)
+    {
+        return (status ?? string.Empty).ToUpperInvariant() switch
+        {
+            "DRAFT" => "badge status-draft",
+            "SUBMITTED" => "badge status-submitted",
+            "RESPONDED" => "badge status-responded",
+            "CLOSED" => "badge status-closed",
+            _ => "badge bg-secondary"
+        };
+    }
+
+    string StatusLabel(string? status)
+    {
+        return (status ?? string.Empty).ToUpperInvariant() switch
+        {
+            "DRAFT" => "Nháp",
+            "SUBMITTED" => "Đã gửi",
+            "RESPONDED" => "Đã phản hồi",
+            "CLOSED" => "Đã đóng",
+            _ => status ?? string.Empty
+        };
+    }
+}
+
+<div class="modal fade" id="feedbackDetailModal" tabindex="-1" aria-labelledby="feedbackDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="feedbackDetailModalLabel">Chi tiết phản hồi</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                    <div>
+                        <h5 class="mb-1">@Model.Title</h5>
+                        <div class="text-muted small">Học kỳ: <strong>@Model.TermName</strong></div>
+                        @if (!string.IsNullOrEmpty(Model.CriterionName))
+                        {
+                            <div class="text-muted small">Tiêu chí: <strong>@Model.CriterionName</strong></div>
+                        }
+                    </div>
+                    <div class="text-md-end mt-3 mt-md-0">
+                        <span class="@StatusBadge(Model.Status)">@StatusLabel(Model.Status)</span>
+                        <div class="text-muted small mt-1">Gửi lúc: @Model.CreatedAt.ToString("dd/MM/yyyy HH:mm", vi)</div>
+                        @if (Model.UpdatedAt.HasValue)
+                        {
+                            <div class="text-muted small">Cập nhật: @Model.UpdatedAt.Value.ToString("dd/MM/yyyy HH:mm", vi)</div>
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-semibold">Nội dung phản hồi</h6>
+                    <div class="feedback-content">@Html.Raw(Html.Encode(Model.Content).Replace("\n", "<br />"))</div>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(Model.Response))
+                {
+                    <div class="mb-4">
+                        <h6 class="fw-semibold">Phản hồi từ khoa</h6>
+                        <div class="alert alert-success">
+                            <div class="feedback-response">@Html.Raw(Html.Encode(Model.Response).Replace("\n", "<br />"))</div>
+                            @if (Model.RespondedAt.HasValue)
+                            {
+                                <div class="small text-muted mt-2">Thời gian phản hồi: @Model.RespondedAt.Value.ToString("dd/MM/yyyy HH:mm", vi)</div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
