@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
-using QLDiemRenLuyen.Admin.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Admin;
 using QLDiemRenLuyen.Data;
 
-namespace QLDiemRenLuyen.Admin.Data
+namespace QLDiemRenLuyen.Data.Admin
 {
     /// <summary>
     /// Repository quản lý điểm danh hoạt động.

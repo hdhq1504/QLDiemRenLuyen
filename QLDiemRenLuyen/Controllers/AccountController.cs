@@ -39,13 +39,13 @@ namespace QLDiemRenLuyen.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View("~/Views/Auth/Login.cshtml", new LoginVM());
+            return View("~/Views/Auth/Login.cshtml", new LoginVm());
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginVM vm, string? returnUrl = null)
+        public async Task<IActionResult> Login(LoginVm vm, string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (!ModelState.IsValid)
@@ -155,13 +155,13 @@ namespace QLDiemRenLuyen.Controllers
         [AllowAnonymous]
         public IActionResult Register()
         {
-            return View("~/Views/Auth/Register.cshtml", new RegisterVM());
+            return View("~/Views/Auth/Register.cshtml", new RegisterVm());
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterVM vm)
+        public async Task<IActionResult> Register(RegisterVm vm)
         {
             if (!ModelState.IsValid)
             {
@@ -200,13 +200,13 @@ namespace QLDiemRenLuyen.Controllers
         [AllowAnonymous]
         public IActionResult ForgotPassword()
         {
-            return View("~/Views/Auth/ForgotPassword.cshtml", new ForgotPasswordVM());
+            return View("~/Views/Auth/ForgotPassword.cshtml", new ForgotPasswordVm());
         }
 
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordVM vm)
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordVm vm)
         {
             if (!ModelState.IsValid)
             {
@@ -229,7 +229,7 @@ namespace QLDiemRenLuyen.Controllers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ChangePassword(ChangePasswordVM vm, string? returnUrl)
+        public async Task<IActionResult> ChangePassword(ChangePasswordVm vm, string? returnUrl)
         {
             if (!ModelState.IsValid)
             {

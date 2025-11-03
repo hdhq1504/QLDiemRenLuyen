@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Admin.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Admin
 {
     /// <summary>
     /// ViewModel trang danh sách hoạt động dành cho admin.

@@ -1,7 +1,7 @@
 ﻿using System;
 using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Admin.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Admin
 {
     public class AdminAttendanceVm
     {

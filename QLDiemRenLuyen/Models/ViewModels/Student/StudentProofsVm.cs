@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Student.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Student
 {
     /// <summary>
     /// ViewModel trang quản lý minh chứng của sinh viên.

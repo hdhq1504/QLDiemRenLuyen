@@ -1,6 +1,6 @@
 ﻿@model NotificationDetailVm
 @using System.Globalization
-@using QLDiemRenLuyen.Student.Models.ViewModels
+@using QLDiemRenLuyen.Models.ViewModels.Student;
 @{
     var vi = new CultureInfo("vi-VN");
     var createdText = Model.CreatedAt == DateTime.MinValue ? "-" : Model.CreatedAt.ToString("dd/MM/yyyy HH:mm", vi);

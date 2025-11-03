@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
-using QLDiemRenLuyen.Admin.Models.ViewModels;
-using QLDiemRenLuyen.Data;
+using QLDiemRenLuyen.Models.ViewModels.Admin;
 
-namespace QLDiemRenLuyen.Admin.Data
+namespace QLDiemRenLuyen.Data.Admin
 {
     /// <summary>
     /// Repository phục vụ nghiệp vụ hoạt động cho trang quản trị.

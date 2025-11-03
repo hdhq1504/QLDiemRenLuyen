@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Student.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {
@@ -48,7 +40,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             if (profile == null)
             {
                 _logger.LogWarning("Không tìm thấy hồ sơ cho sinh viên {StudentId}", studentId);
-                return View(new StudentProfileVm
+                return View("~/Views/Student/StudentProfile/Index.cshtml", new StudentProfileVm
                 {
                     StudentId = studentId,
                     Email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
@@ -59,7 +51,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 });
             }
 
-            return View(profile);
+            return View("~/Views/Student/StudentProfile/Index.cshtml", profile);
         }
 
         [HttpGet("edit")]
@@ -92,7 +84,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 profile.Departments ??= await _repository.GetDepartmentsAsync();
             }
 
-            return PartialView("_EditModal", profile);
+            return PartialView("~/Views/Student/StudentProfile/_EditModal.cshtml", profile);
         }
 
         [HttpPost("edit")]

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
 using QLDiemRenLuyen.Models.ViewModels;
-using QLDiemRenLuyen.Student.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {
@@ -58,7 +58,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             };
 
             ViewData["Title"] = "Phản hồi điểm rèn luyện";
-            return View(model);
+            return View("~/Views/Student/StudentFeedback/Index.cshtml", model);
         }
 
         [HttpGet("create")]
@@ -93,7 +93,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 FormAction = Url.Action("Create") ?? "/student/feedback/create"
             };
 
-            return PartialView("_EditModal", vm);
+            return PartialView("~/Views/Student/StudentFeedback/_EditModal.cshtml", vm);
         }
 
         [HttpPost("create")]
@@ -212,7 +212,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 }
             };
 
-            return PartialView("_EditModal", vm);
+            return PartialView("~/Views/Student/StudentFeedback/_EditModal", vm);
         }
 
         [HttpPost("edit/{id}")]
@@ -333,7 +333,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 return NotFound();
             }
 
-            return PartialView("_DetailModal", detail);
+            return PartialView("~/Views/Student/StudentFeedback/_DetailModal.cshtml", detail);
         }
 
         private string? GetStudentId() => User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using QLDiemRenLuyen.Admin.Data;
-using QLDiemRenLuyen.Admin.Models.ViewModels;
+using QLDiemRenLuyen.Data.Admin;
+using QLDiemRenLuyen.Models.ViewModels.Admin;
 using QLDiemRenLuyen.Models.ViewModels;
 
 namespace QLDiemRenLuyen.Admin.Controllers

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {
@@ -58,7 +55,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 UnreadCount = unreadCount
             };
 
-            return View(model);
+            return View("~/Views/Student/StudentNotifications/Index.cshtml",model);
         }
 
         /// <summary>
@@ -79,7 +76,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 return NotFound();
             }
 
-            return PartialView("_DetailModal", detail);
+            return PartialView("~/Views/Student/StudentNotifications/_DetailModal", detail);
         }
 
         /// <summary>

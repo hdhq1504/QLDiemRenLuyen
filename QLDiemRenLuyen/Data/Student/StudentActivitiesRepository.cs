@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
 using QLDiemRenLuyen.Models.ViewModels;
-using QLDiemRenLuyen.Student.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Data.Student
 {

@@ -1,18 +1,11 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Globalization;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {
@@ -70,7 +63,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             };
 
             ViewData["Title"] = "Minh chứng";
-            return View(model);
+            return View("~/Views/Student/StudentProofs/Index.cshtml", model);
         }
 
         [HttpGet("upload")]
@@ -99,7 +92,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 SelectedActivityId = selected
             };
 
-            return PartialView("_UploadModal", vm);
+            return PartialView("~/Views/Student/StudentProofs/_UploadModal.cshtml", vm);
         }
 
         [HttpPost("upload")]

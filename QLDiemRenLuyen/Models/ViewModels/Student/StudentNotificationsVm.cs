@@ -1,7 +1,7 @@
 ﻿using System;
 using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Student.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Student
 {
     /// <summary>
     /// ViewModel trang danh sách thông báo dành cho sinh viên.

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Models.ViewModels;
+using QLDiemRenLuyen.Models.ViewModels.Student;
 using QLDiemRenLuyen.Services;
 
 namespace QLDiemRenLuyen.Controllers.Student
@@ -54,7 +51,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 Items = pagedResult
             };
 
-            return View(model);
+            return View("~/Views/Student/StudentActivities/Index.cshtml", model);
         }
 
         [HttpGet("{id}")]
@@ -72,7 +69,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 return NotFound();
             }
 
-            return PartialView("_DetailModal", activity);
+            return PartialView("~/Views/Student/StudentActivities/_DetailModal.cshtml", activity);
         }
 
         [HttpPost("{id}/register")]

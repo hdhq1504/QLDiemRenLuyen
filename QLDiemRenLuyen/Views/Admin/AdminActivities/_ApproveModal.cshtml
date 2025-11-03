@@ -1,6 +1,6 @@
 ﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
-    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+    var token = Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken;
 }
 <div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
     <div class="modal-dialog">

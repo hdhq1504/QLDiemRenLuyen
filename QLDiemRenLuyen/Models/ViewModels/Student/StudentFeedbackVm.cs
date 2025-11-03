@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Net.NetworkInformation;
-using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Student.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Student
 {
     /// <summary>
     /// ViewModel trang danh sách phản hồi điểm rèn luyện của sinh viên.
@@ -87,16 +85,6 @@ namespace QLDiemRenLuyen.Student.Models.ViewModels
         public DateTime? UpdatedAt { get; set; }
 
         public DateTime? RespondedAt { get; set; }
-    }
-
-    /// <summary>
-    /// DTO học kỳ sử dụng trong dropdown lọc.
-    /// </summary>
-    public class TermDto
-    {
-        public string Id { get; set; } = string.Empty;
-
-        public string Name { get; set; } = string.Empty;
     }
 
     /// <summary>

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using QLDiemRenLuyen.Models.ViewModels;
 
-namespace QLDiemRenLuyen.Admin.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Admin
 {
     public class AdminRegistrationsVm
     {
@@ -22,6 +22,7 @@ namespace QLDiemRenLuyen.Admin.Models.ViewModels
         public string Status { get; set; } = string.Empty;
         public DateTime? RegisteredAt { get; set; }
         public DateTime? CheckedInAt { get; set; }
+        public bool IsCheckedIn => Status == "CHECKED_IN" || CheckedInAt.HasValue;
     }
 
     public class RegistrationExportRow

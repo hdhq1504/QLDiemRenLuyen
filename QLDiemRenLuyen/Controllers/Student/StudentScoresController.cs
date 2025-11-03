@@ -40,7 +40,7 @@ namespace QLDiemRenLuyen.Controllers.Student
 
             var model = await _repository.GetMyScoreAsync(studentId, termId);
 
-            return View(model);
+            return View("~/Views/Student/StudentScores/Index.cshtml", model);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             }
 
             var history = await _repository.GetHistoryAsync(studentId);
-            return PartialView("_HistoryTable", history);
+            return PartialView("~/Views/Student/StudentScores/_HistoryTable.cshtml", history);
         }
 
         private string? GetStudentId()

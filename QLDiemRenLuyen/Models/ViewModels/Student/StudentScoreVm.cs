@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QLDiemRenLuyen.Student.Models.ViewModels
+namespace QLDiemRenLuyen.Models.ViewModels.Student
 {
     /// <summary>
     /// ViewModel tổng hợp thông tin điểm rèn luyện cho sinh viên.
@@ -34,15 +34,6 @@ namespace QLDiemRenLuyen.Student.Models.ViewModels
         public string Name { get; set; } = string.Empty;
         public decimal Earned { get; set; }
         public decimal MaxPoint { get; set; }
-    }
-
-    /// <summary>
-    /// DTO mô tả học kỳ.
-    /// </summary>
-    public class TermDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
     }
 
     /// <summary>

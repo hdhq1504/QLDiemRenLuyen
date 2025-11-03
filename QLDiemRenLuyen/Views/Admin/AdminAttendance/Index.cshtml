@@ -1,7 +1,7 @@
-﻿@model QLDiemRenLuyen.Admin.Models.ViewModels.AdminAttendanceVm
+﻿@model QLDiemRenLuyen.Models.ViewModels.Admin.AdminRegistrationsVm
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
-    ViewData["Title"] = "Điểm danh";
+    ViewData["Title"] = "Đăng ký & tham gia";
     var token = Antiforgery.GetAndStoreTokens(ViewContext.HttpContext).RequestToken;
 }
 
