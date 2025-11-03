@@ -1,0 +1,32 @@
+﻿@using System.Linq
+@model IEnumerable<QLDiemRenLuyen.ViewModels.RecentAuditVm>
+<table class="table table-sm table-striped align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Thời gian (UTC)</th>
+            <th>Người thực hiện</th>
+            <th>Hành động</th>
+            <th>IP</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">Không có dữ liệu</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.EventAtUtc.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@item.Who</td>
+                    <td><span class="badge bg-secondary">@item.Action</span></td>
+                    <td>@(string.IsNullOrWhiteSpace(item.ClientIp) ? "-" : item.ClientIp)</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

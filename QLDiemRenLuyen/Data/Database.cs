@@ -18,8 +18,18 @@ namespace QLDiemRenLuyen.Data
         {
             await using var conn = (OracleConnection)CreateConnection();
             await conn.OpenAsync();
-            await using var cmd = new OracleCommand(sql, conn) { CommandType = type };
-            if (prms != null) cmd.Parameters.AddRange(prms.ToArray());
+            await using var cmd = new OracleCommand(sql, conn)
+            {
+                CommandType = type,
+                BindByName = true
+            };
+            if (prms != null)
+            {
+                foreach (var prm in prms)
+                {
+                    cmd.Parameters.Add(prm);
+                }
+            }
             return await cmd.ExecuteNonQueryAsync();
         }
 
@@ -28,8 +38,18 @@ namespace QLDiemRenLuyen.Data
         {
             await using var conn = (OracleConnection)CreateConnection();
             await conn.OpenAsync();
-            await using var cmd = new OracleCommand(sql, conn) { CommandType = type };
-            if (prms != null) cmd.Parameters.AddRange(prms.ToArray());
+            await using var cmd = new OracleCommand(sql, conn)
+            {
+                CommandType = type,
+                BindByName = true
+            };
+            if (prms != null)
+            {
+                foreach (var prm in prms)
+                {
+                    cmd.Parameters.Add(prm);
+                }
+            }
             await using var rd = await cmd.ExecuteReaderAsync(CommandBehavior.SingleRow);
             if (await rd.ReadAsync()) return map(rd);
             return default;

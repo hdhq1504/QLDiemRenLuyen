@@ -1,0 +1,32 @@
+﻿@using System.Linq
+@model IEnumerable<QLDiemRenLuyen.ViewModels.PendingFeedbackVm>
+<table class="table table-sm table-striped align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Tiêu đề</th>
+            <th>Sinh viên</th>
+            <th>Kỳ học</th>
+            <th>Ngày tạo</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="4" class="text-center text-muted">Không có phản hồi nào đang chờ.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.StudentName</td>
+                    <td>@item.TermName</td>
+                    <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

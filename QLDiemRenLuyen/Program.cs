@@ -15,6 +15,9 @@ builder.Services.AddScoped<StudentProfileRepository>();
 builder.Services.AddScoped<StudentProofsRepository>();
 builder.Services.AddScoped<StudentFeedbackRepository>();
 builder.Services.AddScoped<StudentNotificationsRepository>();
+builder.Services.AddScoped<AdminDashboardRepository>();
+builder.Services.AddScoped<LecturerDashboardRepository>();
+builder.Services.AddScoped<StaffClassesRepository>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.Configure<EmailOptions>(builder.Configuration.GetSection("Email"));
@@ -34,7 +37,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         opt.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 
-builder.Services.AddAuthorization(); // sau này bạn map theo RoleName
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -60,8 +63,9 @@ app.MapGet("/", context =>
         var redirectUrl = role?.ToUpperInvariant() switch
         {
             "ADMIN" => "/admin/dashboard",
-            "LECTURER" => "/advisor/classes",
-            "ADVISOR" => "/advisor/classes",
+            "LECTURER" => "/lecturer/dashboard",
+            "ADVISOR" => "/lecturer/dashboard",
+            "STAFF" => "/staff/classes/add-student",
             _ => "/student/home"
         };
         context.Response.Redirect(redirectUrl);
@@ -73,8 +77,6 @@ app.MapGet("/", context =>
     return Task.CompletedTask;
 });
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapControllers();
 
 app.Run();

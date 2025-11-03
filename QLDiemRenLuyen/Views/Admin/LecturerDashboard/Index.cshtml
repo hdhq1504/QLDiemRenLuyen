@@ -1,0 +1,77 @@
+﻿@using System.Linq
+@{
+    ViewData["Title"] = "Dashboard giảng viên";
+    Layout = "~/Views/Shared/_LayoutLecturer.cshtml";
+    var classes = ViewBag.Classes as IEnumerable<QLDiemRenLuyen.ViewModels.ClassRowVm> ?? Enumerable.Empty<QLDiemRenLuyen.ViewModels.ClassRowVm>();
+    var terms = ViewBag.Terms as IEnumerable<QLDiemRenLuyen.Models.ViewModels.Student.TermDto> ?? Enumerable.Empty<QLDiemRenLuyen.Models.ViewModels.Student.TermDto>();
+    var defaultTermId = ViewBag.DefaultTermId as string;
+}
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-people-roof me-2 text-primary"></i>Lớp được phân công</h5>
+            </div>
+            <div class="list-group list-group-flush" id="lecturerClassList">
+                @if (!classes.Any())
+                {
+                    <div class="list-group-item text-muted">Chưa có lớp nào được phân công.</div>
+                }
+                else
+                {
+                    foreach (var cls in classes)
+                    {
+                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                data-class-id="@cls.Id">
+                            <span>
+                                <strong>@cls.Name</strong>
+                                <br /><small class="text-muted">@cls.DepartmentName</small>
+                            </span>
+                            <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-graduation-cap me-2 text-success"></i>Bảng điểm rèn luyện lớp</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="form-label small mb-0" for="lecturerTermSelect">Học kỳ</label>
+                    <select class="form-select form-select-sm" id="lecturerTermSelect" data-default-term="@defaultTermId">
+                        @foreach (var term in terms)
+                        {
+                            <option value="@term.Id" selected="@(term.Id == defaultTermId)">@term.Name</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info" id="lecturerDashboardHint" role="alert">
+                    Vui lòng chọn lớp ở danh sách bên trái để xem điểm rèn luyện.
+                </div>
+                <div class="table-responsive d-none" id="lecturerScoresWrapper">
+                    <table class="table table-striped align-middle" id="lecturerScoresTable">
+                        <thead>
+                            <tr>
+                                <th>Mã sinh viên</th>
+                                <th>Họ tên</th>
+                                <th>Điểm tổng</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/lecturer.dashboard.js" asp-append-version="true"></script>
+}

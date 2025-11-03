@@ -1,0 +1,119 @@
+﻿@using System.Linq
+@model QLDiemRenLuyen.ViewModels.AdminKpiVm
+@{
+    ViewData["Title"] = "Dashboard quản trị";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<div class="row g-4 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Tổng người dùng</p>
+                <h3 class="fw-bold mb-0" id="kpi-total-users">@Model.TotalUsers</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Hoạt động đang mở</p>
+                <h3 class="fw-bold mb-0" id="kpi-open-activities">@Model.OpenActivities</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Đăng ký hôm nay</p>
+                <h3 class="fw-bold mb-0" id="kpi-registrations-today">@Model.RegistrationsToday</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Phản hồi chờ xử lý</p>
+                <h3 class="fw-bold mb-0" id="kpi-pending-feedbacks">@Model.PendingFeedbacks</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted text-uppercase small mb-1">Thông báo 7 ngày qua</p>
+                <h3 class="fw-bold mb-0" id="kpi-notifications-7d">@Model.Notifications7d</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-chart-line me-2 text-primary"></i>Đăng ký theo ngày</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="registrationsTrendChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-chart-column me-2 text-primary"></i>Top hoạt động theo số đăng ký</h5>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="form-label mb-0 small" for="topActivitiesTerm">Kỳ học</label>
+                    <select id="topActivitiesTerm" class="form-select form-select-sm" data-current-term="@ViewBag.DefaultTermId">
+                        <option value="">-- Kỳ hiện tại --</option>
+                        @if (ViewBag.Terms is IEnumerable<QLDiemRenLuyen.ViewModels.LookupDto> termOptions)
+                        {
+                            foreach (var term in termOptions)
+                            {
+                                <option value="@term.Id">@term.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="card-body">
+                <canvas id="topActivitiesChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-shield-halved me-2 text-secondary"></i>Audit gần nhất</h5>
+                <button class="btn btn-sm btn-outline-secondary" id="btnRefreshAudit"><i class="fa-solid fa-rotate"></i></button>
+            </div>
+            <div class="card-body">
+                <div id="recentAuditContainer" data-url="@Url.Action("RecentAudit")">
+                    @await Html.PartialAsync("_RecentAudit", Enumerable.Empty<QLDiemRenLuyen.ViewModels.RecentAuditVm>())
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="fa-solid fa-comments me-2 text-danger"></i>Phản hồi đang chờ</h5>
+                <button class="btn btn-sm btn-outline-secondary" id="btnRefreshFeedback"><i class="fa-solid fa-rotate"></i></button>
+            </div>
+            <div class="card-body">
+                <div id="pendingFeedbackContainer" data-url="@Url.Action("PendingFeedbacks")">
+                    @await Html.PartialAsync("_PendingFeedbacks", Enumerable.Empty<QLDiemRenLuyen.ViewModels.PendingFeedbackVm>())
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="~/js/admin.dashboard.js" asp-append-version="true"></script>
+}

@@ -8,7 +8,7 @@ using QLDiemRenLuyen.Models.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {
-    public class HomeController : Controller
+    public class StudentHomeController : Controller
     {
         [Authorize(Roles = "STUDENT")]
         /// Trang dashboard dành cho sinh viên.
@@ -67,7 +67,7 @@ namespace QLDiemRenLuyen.Controllers.Student
                 }
             };
 
-            return View(viewModel);
+            return View("~/Views/Student/StudentHome/Index.cshtml", viewModel);
         }
 
         [AllowAnonymous]
