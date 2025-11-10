@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace QLDiemRenLuyen.Models.ViewModels.Student
+namespace QLDiemRenLuyen.ViewModels.Student
 {
     /// <summary>
     /// ViewModel hiển thị thông tin hồ sơ sinh viên.

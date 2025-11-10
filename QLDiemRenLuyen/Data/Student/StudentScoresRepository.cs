@@ -6,7 +6,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using QLDiemRenLuyen.Models.ViewModels.Student;
+using QLDiemRenLuyen.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Data.Student
 {

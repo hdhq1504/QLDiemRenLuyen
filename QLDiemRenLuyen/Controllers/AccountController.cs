@@ -2,17 +2,18 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data;
 using QLDiemRenLuyen.Models;
 using QLDiemRenLuyen.Services;
-using QLDiemRenLuyen.ViewModels;
+using QLDiemRenLuyen.ViewModels.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Encodings.Web;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace QLDiemRenLuyen.Controllers
 {
@@ -136,19 +137,19 @@ namespace QLDiemRenLuyen.Controllers
             return Redirect(GetRedirectUrlByRole(user.RoleName));
         }
 
-        [HttpPost]
+        [HttpGet("Logout")]
+        [Authorize]
+        public Task<IActionResult> Logout()
+        {
+            return SignOutAndRedirectAsync();
+        }
+
+        [HttpPost("Logout")]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public Task<IActionResult> LogoutPost()
         {
-            var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                await _repo.AuditAsync(email, "LOGOUT", GetIp(), GetUA());
-            }
-
-            return RedirectToAction(nameof(Login));
+            return SignOutAndRedirectAsync();
         }
 
         [HttpGet]
@@ -293,6 +294,18 @@ namespace QLDiemRenLuyen.Controllers
         public IActionResult AccessDenied()
         {
             return View();
+        }
+
+        private async Task<IActionResult> SignOutAndRedirectAsync()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                await _repo.AuditAsync(email, "LOGOUT", GetIp(), GetUA());
+            }
+
+            return RedirectToAction(nameof(Login), "Account");
         }
 
         private string? GetIp() => HttpContext.Connection.RemoteIpAddress?.ToString();

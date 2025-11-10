@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Models.ViewModels.Student;
+using QLDiemRenLuyen.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {

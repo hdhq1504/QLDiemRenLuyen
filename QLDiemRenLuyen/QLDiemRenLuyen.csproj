@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\ViewModels\Admin\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 

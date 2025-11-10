@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace QLDiemRenLuyen.Models.ViewModels.Student
+namespace QLDiemRenLuyen.ViewModels.Student
 {
     /// <summary>
     /// ViewModel tổng hợp thông tin điểm rèn luyện cho sinh viên.

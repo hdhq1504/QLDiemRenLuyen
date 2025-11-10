@@ -77,6 +77,9 @@ app.MapGet("/", context =>
     return Task.CompletedTask;
 });
 
-app.MapControllers();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action}/{id?}",
+    defaults: new { controller = "Account", action = "Login" });
 
 app.Run();

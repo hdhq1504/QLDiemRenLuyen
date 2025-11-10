@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data;
 
-namespace QLDiemRenLuyen.Controllers
+namespace QLDiemRenLuyen.Controllers.Admin
 {
     /// <summary>
     /// Controller xử lý các yêu cầu dashboard của quản trị viên.
@@ -31,7 +31,7 @@ namespace QLDiemRenLuyen.Controllers
             var terms = (await _repository.GetTermsAsync()).ToList();
             ViewBag.Terms = terms;
             ViewBag.DefaultTermId = terms.FirstOrDefault()?.Id;
-            return View(kpis);
+            return View("~/Views/Admin/AdminDashboard/Index.cshtml", kpis);
         }
 
         [HttpGet("registrations-trend")]
@@ -70,14 +70,14 @@ namespace QLDiemRenLuyen.Controllers
         public async Task<IActionResult> RecentAudit()
         {
             var data = await _repository.GetRecentAuditAsync(8);
-            return PartialView("_RecentAudit", data);
+            return PartialView("~/Views/Admin/AdminDashboard/_RecentAudit", data);
         }
 
         [HttpGet("pending-feedbacks")]
         public async Task<IActionResult> PendingFeedbacks()
         {
             var data = await _repository.GetPendingFeedbacksAsync(10);
-            return PartialView("_PendingFeedbacks", data);
+            return PartialView("~/Views/Admin/AdminDashboard/_PendingFeedbacks", data);
         }
     }
 }

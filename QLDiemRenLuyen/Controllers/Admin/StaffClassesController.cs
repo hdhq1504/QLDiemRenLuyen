@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data;
-using QLDiemRenLuyen.ViewModels;
+using QLDiemRenLuyen.ViewModels.Staff;
 
-namespace QLDiemRenLuyen.Controllers
+namespace QLDiemRenLuyen.Controllers.Staff
 {
     /// <summary>
     /// Controller xử lý tác vụ cán bộ thêm sinh viên vào lớp.
@@ -35,7 +35,7 @@ namespace QLDiemRenLuyen.Controllers
             {
                 Classes = await _repository.GetClassesAsync()
             };
-            return View(vm);
+            return View("~/Views/Staff/Classes/AddStudent.cshtml", vm);
         }
 
         [HttpPost("add-student")]
@@ -48,7 +48,7 @@ namespace QLDiemRenLuyen.Controllers
 
             if (!ModelState.IsValid)
             {
-                return View(vm);
+                return View("~/Views/Staff/Classes/AddStudent.cshtml", vm);
             }
 
             try
@@ -62,13 +62,13 @@ namespace QLDiemRenLuyen.Controllers
                 }
 
                 ModelState.AddModelError(string.Empty, "Không thể cập nhật lớp cho sinh viên.");
-                return View(vm);
+                return View("~/Views/Staff/Classes/AddStudent.cshtml", vm);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Lỗi khi cán bộ thêm sinh viên {StudentId} vào lớp {ClassId}", vm.StudentId, vm.ClassId);
                 ModelState.AddModelError(string.Empty, "Có lỗi xảy ra khi xử lý yêu cầu.");
-                return View(vm);
+                return View("~/Views/Staff/Classes/AddStudent.cshtml", vm);
             }
         }
 

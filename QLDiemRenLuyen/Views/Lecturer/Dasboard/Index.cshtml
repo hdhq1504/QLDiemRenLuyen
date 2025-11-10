@@ -1,9 +1,11 @@
 ﻿@using System.Linq
+@using QLDiemRenLuyen.ViewModels.Admin
+@using QLDiemRenLuyen.ViewModels.Student
 @{
     ViewData["Title"] = "Dashboard giảng viên";
     Layout = "~/Views/Shared/_LayoutLecturer.cshtml";
-    var classes = ViewBag.Classes as IEnumerable<QLDiemRenLuyen.ViewModels.ClassRowVm> ?? Enumerable.Empty<QLDiemRenLuyen.ViewModels.ClassRowVm>();
-    var terms = ViewBag.Terms as IEnumerable<QLDiemRenLuyen.Models.ViewModels.Student.TermDto> ?? Enumerable.Empty<QLDiemRenLuyen.Models.ViewModels.Student.TermDto>();
+    var classes = ViewBag.Classes as IEnumerable<QLDiemRenLuyen.ViewModels.Lecturer.ClassRowVm> ?? Enumerable.Empty<QLDiemRenLuyen.ViewModels.Lecturer.ClassRowVm>();
+    var terms = ViewBag.Terms as IEnumerable<QLDiemRenLuyen.ViewModels.Student.TermDto> ?? Enumerable.Empty<QLDiemRenLuyen.ViewModels.Student.TermDto>();
     var defaultTermId = ViewBag.DefaultTermId as string;
 }
 

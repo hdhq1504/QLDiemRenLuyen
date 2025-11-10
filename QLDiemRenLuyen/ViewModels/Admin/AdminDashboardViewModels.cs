@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
-namespace QLDiemRenLuyen.ViewModels
+namespace QLDiemRenLuyen.ViewModels.Admin
 {
     /// <summary>
     /// Thống kê tổng quan dành cho trang dashboard của quản trị viên.
@@ -57,48 +55,5 @@ namespace QLDiemRenLuyen.ViewModels
         public string StudentName { get; set; } = string.Empty;
         public string TermName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-    }
-
-    /// <summary>
-    /// Dòng dữ liệu thông tin lớp mà giảng viên quản lý.
-    /// </summary>
-    public class ClassRowVm
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
-        public string? DepartmentName { get; set; }
-    }
-
-    /// <summary>
-    /// Dòng dữ liệu điểm rèn luyện của sinh viên trong lớp.
-    /// </summary>
-    public class StudentScoreRowVm
-    {
-        public string StudentId { get; set; } = string.Empty;
-        public string FullName { get; set; } = string.Empty;
-        public decimal Total { get; set; }
-        public string Status { get; set; } = string.Empty;
-        public string TermName { get; set; } = string.Empty;
-    }
-
-    /// <summary>
-    /// ViewModel dùng cho màn hình thêm sinh viên vào lớp của cán bộ.
-    /// </summary>
-    public class AddStudentToClassVm
-    {
-        [Required(ErrorMessage = "Vui lòng nhập mã sinh viên")]
-        public string StudentId { get; set; } = string.Empty;
-        [Required(ErrorMessage = "Vui lòng chọn lớp")]
-        public string ClassId { get; set; } = string.Empty;
-        public IEnumerable<LookupDto> Classes { get; set; } = new List<LookupDto>();
-    }
-
-    /// <summary>
-    /// DTO tra cứu dùng chung (id, name).
-    /// </summary>
-    public class LookupDto
-    {
-        public string Id { get; set; } = string.Empty;
-        public string Name { get; set; } = string.Empty;
     }
 }

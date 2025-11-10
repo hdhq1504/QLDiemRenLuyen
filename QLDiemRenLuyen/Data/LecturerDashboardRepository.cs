@@ -4,7 +4,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Oracle.ManagedDataAccess.Client;
-using QLDiemRenLuyen.ViewModels;
+using QLDiemRenLuyen.ViewModels.Lecturer;
 
 namespace QLDiemRenLuyen.Data
 {

@@ -1,5 +1,5 @@
 ﻿@using System.Linq
-@model QLDiemRenLuyen.ViewModels.AdminKpiVm
+@model QLDiemRenLuyen.ViewModels.Admin.AdminKpiVm
 @{
     ViewData["Title"] = "Dashboard quản trị";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
@@ -67,7 +67,7 @@
                     <label class="form-label mb-0 small" for="topActivitiesTerm">Kỳ học</label>
                     <select id="topActivitiesTerm" class="form-select form-select-sm" data-current-term="@ViewBag.DefaultTermId">
                         <option value="">-- Kỳ hiện tại --</option>
-                        @if (ViewBag.Terms is IEnumerable<QLDiemRenLuyen.ViewModels.LookupDto> termOptions)
+                        @if (ViewBag.Terms is IEnumerable<QLDiemRenLuyen.ViewModels.Common.LookupDto> termOptions)
                         {
                             foreach (var term in termOptions)
                             {
@@ -93,7 +93,7 @@
             </div>
             <div class="card-body">
                 <div id="recentAuditContainer" data-url="@Url.Action("RecentAudit")">
-                    @await Html.PartialAsync("_RecentAudit", Enumerable.Empty<QLDiemRenLuyen.ViewModels.RecentAuditVm>())
+                    @await Html.PartialAsync("~/Views/Admin/AdminDashboard/_RecentAudit.cshtml", Enumerable.Empty<QLDiemRenLuyen.ViewModels.Admin.RecentAuditVm>())
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
             </div>
             <div class="card-body">
                 <div id="pendingFeedbackContainer" data-url="@Url.Action("PendingFeedbacks")">
-                    @await Html.PartialAsync("_PendingFeedbacks", Enumerable.Empty<QLDiemRenLuyen.ViewModels.PendingFeedbackVm>())
+                    @await Html.PartialAsync("~/Views/Admin/AdminDashboard/_PendingFeedbacks.cshtml", Enumerable.Empty<QLDiemRenLuyen.ViewModels.Admin.PendingFeedbackVm>())
                 </div>
             </div>
         </div>

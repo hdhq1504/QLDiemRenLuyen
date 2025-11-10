@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace QLDiemRenLuyen.Models.ViewModels
+namespace QLDiemRenLuyen.ViewModels.Common
 {
     /// <summary>
     /// Danh sách phân trang dùng chung cho các view.

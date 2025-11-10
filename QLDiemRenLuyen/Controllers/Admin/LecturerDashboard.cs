@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data;
 using QLDiemRenLuyen.Data.Student;
 
-namespace QLDiemRenLuyen.Controllers
+namespace QLDiemRenLuyen.Controllers.Lecturer
 {
     /// <summary>
     /// Dashboard giảng viên xem lớp và điểm rèn luyện.
@@ -47,7 +47,7 @@ namespace QLDiemRenLuyen.Controllers
             ViewBag.Terms = terms;
             ViewBag.DefaultTermId = terms.FirstOrDefault()?.Id;
 
-            return View();
+            return View("~/Views/Lecturer/Dashboard/Index.cshtml");
         }
 
         [HttpGet("classes")]

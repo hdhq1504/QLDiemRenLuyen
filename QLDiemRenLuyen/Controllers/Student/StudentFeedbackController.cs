@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QLDiemRenLuyen.Data.Student;
-using QLDiemRenLuyen.Models.ViewModels;
-using QLDiemRenLuyen.Models.ViewModels.Student;
+using QLDiemRenLuyen.ViewModels.Common;
+using QLDiemRenLuyen.ViewModels.Student;
 
 namespace QLDiemRenLuyen.Controllers.Student
 {

@@ -1,8 +1,9 @@
-﻿using System;
+﻿using QLDiemRenLuyen.ViewModels.Common;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace QLDiemRenLuyen.Models.ViewModels.Student
+namespace QLDiemRenLuyen.ViewModels.Student
 {
     /// <summary>
     /// ViewModel trang danh sách phản hồi điểm rèn luyện của sinh viên.

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using QLDiemRenLuyen.Models.ViewModels;
+using QLDiemRenLuyen.ViewModels.Common;
 
-namespace QLDiemRenLuyen.Models.ViewModels.Student
+namespace QLDiemRenLuyen.ViewModels.Student
 {
     /// <summary>
     /// ViewModel trang danh sách hoạt động dành cho sinh viên.
@@ -41,6 +41,9 @@ namespace QLDiemRenLuyen.Models.ViewModels.Student
         public string StudentState { get; set; } = "NOT_REGISTERED";
     }
 
+    /// <summary>
+    /// DTO dùng để gửi email nhắc nhở hoạt động.
+    /// </summary>
     public class ActivityReminderDto
     {
         public string Id { get; set; } = string.Empty;
