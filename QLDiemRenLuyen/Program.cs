@@ -16,6 +16,7 @@ builder.Services.AddScoped<StudentProofsRepository>();
 builder.Services.AddScoped<StudentFeedbackRepository>();
 builder.Services.AddScoped<StudentNotificationsRepository>();
 builder.Services.AddScoped<AdminDashboardRepository>();
+builder.Services.AddScoped<AdminActivitiesRepository>();
 builder.Services.AddScoped<LecturerDashboardRepository>();
 builder.Services.AddScoped<StaffClassesRepository>();
 

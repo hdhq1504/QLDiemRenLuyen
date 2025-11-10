@@ -1,0 +1,86 @@
+﻿@model QLDiemRenLuyen.ViewModels.Admin.ActivityDetailVm
+
+<div class="modal fade" id="activityDetailModal" tabindex="-1" aria-labelledby="activityDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activityDetailModalLabel">Chi tiết hoạt động</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <div class="modal-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-3">Tiêu đề</dt>
+                    <dd class="col-sm-9">@Model.Title</dd>
+
+                    <dt class="col-sm-3">Học kỳ</dt>
+                    <dd class="col-sm-9">@Model.TermName (@Model.TermId)</dd>
+
+                    <dt class="col-sm-3">Tiêu chí</dt>
+                    <dd class="col-sm-9">@Model.CriterionName (@Model.CriterionId)</dd>
+
+                    <dt class="col-sm-3">Thời gian</dt>
+                    <dd class="col-sm-9">
+                        @Model.StartAt.ToString("dd/MM/yyyy HH:mm") - @Model.EndAt.ToString("dd/MM/yyyy HH:mm")
+                    </dd>
+
+                    <dt class="col-sm-3">Trạng thái</dt>
+                    <dd class="col-sm-9">
+                        <span class="badge bg-info text-dark">@Model.Status</span>
+                        <span class="badge bg-secondary ms-1">Duyệt: @Model.ApprovalStatus</span>
+                    </dd>
+
+                    <dt class="col-sm-3">Điểm thưởng</dt>
+                    <dd class="col-sm-9">@(Model.Points?.ToString("0.##") ?? "-")</dd>
+
+                    <dt class="col-sm-3">Chỗ</dt>
+                    <dd class="col-sm-9">
+                        Đăng ký: @Model.RegisteredCount<br />
+                        Đã điểm danh: @Model.CheckedInCount<br />
+                        Tối đa: @(Model.MaxSeats?.ToString() ?? "Không giới hạn")
+                    </dd>
+
+                    <dt class="col-sm-3">Địa điểm</dt>
+                    <dd class="col-sm-9">@Model.Location</dd>
+
+                    <dt class="col-sm-3">Mô tả</dt>
+                    <dd class="col-sm-9">
+                        @if (string.IsNullOrWhiteSpace(Model.Description))
+                        {
+                            <span class="text-muted">(Không có mô tả)</span>
+                        }
+                        else
+                        {
+                            <div class="border rounded p-2 bg-light" style="white-space: pre-wrap;">@Model.Description</div>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Tổ chức</dt>
+                    <dd class="col-sm-9">@Model.OrganizerName (@Model.OrganizerId)</dd>
+
+                    <dt class="col-sm-3">Phê duyệt</dt>
+                    <dd class="col-sm-9">
+                        @if (!string.IsNullOrEmpty(Model.ApprovedBy))
+                        {
+                            <div>
+                                Người duyệt: @Model.ApprovedByName (@Model.ApprovedBy)
+                            </div>
+                            <div>
+                                Thời gian: @Model.ApprovedAt?.ToString("dd/MM/yyyy HH:mm")
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Chưa được phê duyệt.</span>
+                        }
+                    </dd>
+
+                    <dt class="col-sm-3">Tạo lúc</dt>
+                    <dd class="col-sm-9">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

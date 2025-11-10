@@ -1,0 +1,92 @@
+﻿@model QLDiemRenLuyen.ViewModels.Admin.ActivityEditModalVm
+@{
+    var statuses = new[] { "OPEN", "CLOSED", "FULL", "CANCELLED" };
+}
+
+<div class="modal fade" id="activityEditModal" tabindex="-1" aria-labelledby="activityEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activityEditModalLabel">@(Model.IsEdit ? "Chỉnh sửa hoạt động" : "Tạo hoạt động mới")</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+            </div>
+            <form id="activityEditForm" method="post" action="@Model.FormAction" data-is-edit="@Model.IsEdit">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none" id="activityValidationSummary"></div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_Title">Tên hoạt động</label>
+                            <input class="form-control" id="Activity_Title" name="Title" value="@Model.Activity.Title" />
+                            <div class="text-danger" data-field="Title"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_Status">Trạng thái</label>
+                            <select class="form-select" id="Activity_Status" name="Status">
+                                @foreach (var status in statuses)
+                                {
+                                    <option value="@status" selected="@(string.Equals(status, Model.Activity.Status, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@status</option>
+                                }
+                            </select>
+                            <div class="text-danger" data-field="Status"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_TermId">Học kỳ</label>
+                            <select class="form-select" id="Activity_TermId" name="TermId">
+                                @foreach (var term in Model.Terms)
+                                {
+                                    <option value="@term.Id" selected="@(string.Equals(term.Id, Model.Activity.TermId, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@term.Name</option>
+                                }
+                            </select>
+                            <div class="text-danger" data-field="TermId"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_CriterionId">Tiêu chí</label>
+                            <select class="form-select" id="Activity_CriterionId" name="CriterionId">
+                                @foreach (var criterion in Model.Criteria)
+                                {
+                                    <option value="@criterion.Id" selected="@(string.Equals(criterion.Id, Model.Activity.CriterionId, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@criterion.Name</option>
+                                }
+                            </select>
+                            <div class="text-danger" data-field="CriterionId"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_StartAt">Thời gian bắt đầu</label>
+                            <input type="datetime-local" class="form-control" id="Activity_StartAt" name="StartAt" value="@Model.Activity.StartAt.ToString("yyyy-MM-ddTHH:mm")" />
+                            <div class="text-danger" data-field="StartAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_EndAt">Thời gian kết thúc</label>
+                            <input type="datetime-local" class="form-control" id="Activity_EndAt" name="EndAt" value="@Model.Activity.EndAt.ToString("yyyy-MM-ddTHH:mm")" />
+                            <div class="text-danger" data-field="EndAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_MaxSeats">Số chỗ tối đa</label>
+                            <input type="number" min="0" class="form-control" id="Activity_MaxSeats" name="MaxSeats" value="@(Model.Activity.MaxSeats?.ToString() ?? string.Empty)" />
+                            <div class="text-danger" data-field="MaxSeats"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="Activity_Points">Điểm thưởng</label>
+                            <input type="number" min="0" step="0.5" class="form-control" id="Activity_Points" name="Points" value="@(Model.Activity.Points?.ToString() ?? string.Empty)" />
+                            <div class="text-danger" data-field="Points"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label" for="Activity_Location">Địa điểm</label>
+                            <input class="form-control" id="Activity_Location" name="Location" value="@Model.Activity.Location" />
+                            <div class="text-danger" data-field="Location"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="Activity_Description">Mô tả</label>
+                            <textarea class="form-control" id="Activity_Description" name="Description" rows="4">@Model.Activity.Description</textarea>
+                            <div class="text-danger" data-field="Description"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">@(Model.IsEdit ? "Lưu thay đổi" : "Tạo hoạt động")</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

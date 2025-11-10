@@ -1,0 +1,282 @@
+﻿@model QLDiemRenLuyen.ViewModels.Admin.AdminActivitiesIndexVm
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var statusOptions = ViewBag.StatusOptions as string[] ?? new[] { "all", "OPEN", "CLOSED", "FULL", "CANCELLED" };
+    var approvalOptions = ViewBag.ApprovalOptions as string[] ?? new[] { "all", "PENDING", "APPROVED", "REJECTED" };
+    var totalPages = Model.Activities.TotalPages > 0 ? Model.Activities.TotalPages : 1;
+    var currentPage = Math.Clamp(Model.Activities.Page, 1, totalPages);
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h4 mb-0">Quản lý hoạt động</h2>
+        <button class="btn btn-primary" type="button" id="btnCreateActivity">
+            <i class="fa fa-plus-circle me-1"></i>
+            Tạo hoạt động
+        </button>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form id="filterForm" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Học kỳ</label>
+                    <select class="form-select" name="termId">
+                        <option value="">Tất cả</option>
+                        @foreach (var term in Model.Terms)
+                        {
+                            <option value="@term.Id" selected="@(term.Id == Model.Filter.TermId ? "selected" : null)">@term.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Tiêu chí</label>
+                    <select class="form-select" name="criterionId">
+                        <option value="">Tất cả</option>
+                        @foreach (var criterion in Model.Criteria)
+                        {
+                            <option value="@criterion.Id" selected="@(criterion.Id == Model.Filter.CriterionId ? "selected" : null)">@criterion.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Trạng thái</label>
+                    <select class="form-select" name="status">
+                        @foreach (var status in statusOptions)
+                        {
+                            <option value="@status" selected="@(string.Equals(status, Model.Filter.Status, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@GetStatusLabel(status)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Duyệt</label>
+                    <select class="form-select" name="approval">
+                        @foreach (var item in approvalOptions)
+                        {
+                            <option value="@item" selected="@(string.Equals(item, Model.Filter.Approval, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@GetApprovalLabel(item)</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Từ khóa</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="q" value="@Model.Filter.Keyword" placeholder="Tìm kiếm..." />
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Học kỳ</th>
+                            <th>Tiêu chí</th>
+                            <th>Thời gian</th>
+                            <th>Trạng thái</th>
+                            <th>Duyệt</th>
+                            <th>Chỗ</th>
+                            <th class="text-end">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Activities.Data.Any())
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center py-4">Không có hoạt động phù hợp.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var activity in Model.Activities.Data)
+                            {
+                                <tr data-activity-id="@activity.Id">
+                                    <td>
+                                        <strong>@activity.Title</strong>
+                                        <div class="text-muted small">Bắt đầu: @activity.StartAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                    </td>
+                                    <td>@activity.TermName</td>
+                                    <td>@activity.CriterionName</td>
+                                    <td>
+                                        <div>@activity.StartAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                        <div class="text-muted small">@activity.EndAt.ToString("dd/MM/yyyy HH:mm")</div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">@GetStatusLabel(activity.Status)</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">@GetApprovalLabel(activity.ApprovalStatus)</span>
+                                    </td>
+                                    <td>
+                                        @if (activity.MaxSeats.HasValue && activity.MaxSeats.Value > 0)
+                                        {
+                                            <span>@activity.RegisteredCount/@activity.MaxSeats</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@activity.RegisteredCount</span>
+                                        }
+                                        <div class="text-muted small">Check-in: @activity.CheckedInCount</div>
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-secondary" data-action="detail" data-id="@activity.Id" title="Xem chi tiết"><i class="fa fa-eye"></i></button>
+                                            <button type="button" class="btn btn-outline-primary" data-action="edit" data-id="@activity.Id" title="Chỉnh sửa"><i class="fa fa-edit"></i></button>
+                                            <button type="button" class="btn btn-outline-success" data-action="open" data-id="@activity.Id" title="Mở"><i class="fa fa-door-open"></i></button>
+                                            <button type="button" class="btn btn-outline-warning" data-action="close" data-id="@activity.Id" title="Đóng"><i class="fa fa-lock"></i></button>
+                                            <button type="button" class="btn btn-outline-dark" data-action="full" data-id="@activity.Id" title="Đủ chỗ"><i class="fa fa-users"></i></button>
+                                            <button type="button" class="btn btn-outline-danger" data-action="cancel" data-id="@activity.Id" title="Hủy"><i class="fa fa-ban"></i></button>
+                                            <button type="button" class="btn btn-outline-success" data-action="approve" data-id="@activity.Id" title="Phê duyệt"><i class="fa fa-check"></i></button>
+                                            <button type="button" class="btn btn-outline-danger" data-action="reject" data-id="@activity.Id" title="Từ chối"><i class="fa fa-times"></i></button>
+                                            <button type="button" class="btn btn-outline-danger" data-action="delete" data-id="@activity.Id" title="Xóa"><i class="fa fa-trash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer d-flex justify-content-between align-items-center">
+            <div>
+                Trang @currentPage / @totalPages - Tổng @Model.Activities.TotalItems hoạt động
+            </div>
+            <nav>
+                <ul class="pagination mb-0">
+                    @{
+                        var prevDisabled = currentPage <= 1 ? "disabled" : string.Empty;
+                    }
+                    <li class="page-item @prevDisabled">
+                        <a class="page-link" href="@BuildPageUrl(currentPage - 1, totalPages)" aria-label="Trang trước">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @for (var i = 1; i <= totalPages; i++)
+                    {
+                        var active = i == currentPage ? "active" : string.Empty;
+                        <li class="page-item @active">
+                            <a class="page-link" href="@BuildPageUrl(i, totalPages)">@i</a>
+                        </li>
+                    }
+                    @{
+                        var nextDisabled = currentPage >= totalPages ? "disabled" : string.Empty;
+                    }
+                    <li class="page-item @nextDisabled">
+                        <a class="page-link" href="@BuildPageUrl(currentPage + 1, totalPages)" aria-label="Trang sau">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<form id="antiForgeryForm" method="post" class="d-none">
+    @Html.AntiForgeryToken()
+</form>
+<div id="modalPlaceholder"></div>
+<div id="detailModalPlaceholder"></div>
+<div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer"></div>
+
+@section Scripts {
+    <script>
+        window.adminActivityLabels = {
+            status: {
+                OPEN: "Đang mở",
+                CLOSED: "Đã đóng",
+                FULL: "Đủ chỗ",
+                CANCELLED: "Đã hủy",
+                all: "Tất cả"
+            },
+            approval: {
+                PENDING: "Đang chờ",
+                APPROVED: "Đã duyệt",
+                REJECTED: "Từ chối",
+                all: "Tất cả"
+            }
+        };
+    </script>
+    <script src="~/js/admin.activities.js" asp-append-version="true"></script>
+}
+
+@functions {
+    private string GetStatusLabel(string status)
+    {
+        return status?.ToUpperInvariant() switch
+        {
+            "OPEN" => "Đang mở",
+            "CLOSED" => "Đã đóng",
+            "FULL" => "Đủ chỗ",
+            "CANCELLED" => "Đã hủy",
+            "ALL" => "Tất cả",
+            _ => status
+        };
+    }
+
+    private string GetApprovalLabel(string status)
+    {
+        return status?.ToUpperInvariant() switch
+        {
+            "PENDING" => "Đang chờ",
+            "APPROVED" => "Đã duyệt",
+            "REJECTED" => "Từ chối",
+            "ALL" => "Tất cả",
+            _ => status
+        };
+    }
+
+    private string BuildPageUrl(int page, int totalPages)
+    {
+        if (page < 1)
+        {
+            page = 1;
+        }
+        if (page > totalPages)
+        {
+            page = totalPages;
+        }
+
+        var query = new System.Collections.Specialized.NameValueCollection
+        {
+            ["termId"] = Model.Filter.TermId,
+            ["criterionId"] = Model.Filter.CriterionId,
+            ["status"] = Model.Filter.Status,
+            ["approval"] = Model.Filter.Approval,
+            ["q"] = Model.Filter.Keyword,
+            ["page"] = page.ToString(),
+            ["pageSize"] = Model.Filter.PageSize.ToString()
+        };
+
+        var builder = new System.Text.StringBuilder("/admin/activities?");
+        var first = true;
+        foreach (string key in query.AllKeys!)
+        {
+            var value = query[key];
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                continue;
+            }
+
+            if (!first)
+            {
+                builder.Append('&');
+            }
+
+            builder.Append(Uri.EscapeDataString(key));
+            builder.Append('=');
+            builder.Append(Uri.EscapeDataString(value));
+            first = false;
+        }
+
+        return builder.ToString();
+    }
+}

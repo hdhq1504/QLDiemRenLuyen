@@ -40,10 +40,6 @@ namespace QLDiemRenLuyen.Controllers.Student
             pageSize = Math.Clamp(pageSize, 5, 50);
             var keyword = string.IsNullOrWhiteSpace(q) ? null : q.Trim();
             var normalizedTermId = string.IsNullOrWhiteSpace(termId) ? null : termId.Trim();
-            if (normalizedTermId != null && !int.TryParse(normalizedTermId, out _))
-            {
-                normalizedTermId = null;
-            }
 
             var terms = (await _repository.GetTermsAsync()).ToList();
             var paged = await _repository.GetFeedbacksAsync(studentId, normalizedTermId, page, pageSize, keyword);
@@ -112,11 +108,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             vm.CriterionId = string.IsNullOrWhiteSpace(vm.CriterionId) ? null : vm.CriterionId.Trim();
 
             var terms = (await _repository.GetTermsAsync()).ToList();
-            if (!int.TryParse(vm.TermId, out _))
-            {
-                ModelState.AddModelError(nameof(vm.TermId), "Học kỳ không hợp lệ.");
-            }
-            else if (!terms.Any(t => string.Equals(t.Id, vm.TermId, StringComparison.OrdinalIgnoreCase)))
+            if (!terms.Any(t => string.Equals(t.Id, vm.TermId, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError(nameof(vm.TermId), "Học kỳ không hợp lệ.");
             }
@@ -124,11 +116,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             var criteria = (await _repository.GetCriteriaAsync()).ToList();
             if (!string.IsNullOrWhiteSpace(vm.CriterionId))
             {
-                if (!int.TryParse(vm.CriterionId, out _))
-                {
-                    ModelState.AddModelError(nameof(vm.CriterionId), "Tiêu chí không hợp lệ.");
-                }
-                else if (!criteria.Any(c => string.Equals(c.Id, vm.CriterionId, StringComparison.OrdinalIgnoreCase)))
+                if (!criteria.Any(c => string.Equals(c.Id, vm.CriterionId, StringComparison.OrdinalIgnoreCase)))
                 {
                     ModelState.AddModelError(nameof(vm.CriterionId), "Tiêu chí không hợp lệ.");
                 }
@@ -242,11 +230,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             }
 
             var terms = (await _repository.GetTermsAsync()).ToList();
-            if (!int.TryParse(vm.TermId, out _))
-            {
-                ModelState.AddModelError(nameof(vm.TermId), "Học kỳ không hợp lệ.");
-            }
-            else if (!terms.Any(t => string.Equals(t.Id, vm.TermId, StringComparison.OrdinalIgnoreCase)))
+            if (!terms.Any(t => string.Equals(t.Id, vm.TermId, StringComparison.OrdinalIgnoreCase)))
             {
                 ModelState.AddModelError(nameof(vm.TermId), "Học kỳ không hợp lệ.");
             }
@@ -254,11 +238,7 @@ namespace QLDiemRenLuyen.Controllers.Student
             var criteria = (await _repository.GetCriteriaAsync()).ToList();
             if (!string.IsNullOrWhiteSpace(vm.CriterionId))
             {
-                if (!int.TryParse(vm.CriterionId, out _))
-                {
-                    ModelState.AddModelError(nameof(vm.CriterionId), "Tiêu chí không hợp lệ.");
-                }
-                else if (!criteria.Any(c => string.Equals(c.Id, vm.CriterionId, StringComparison.OrdinalIgnoreCase)))
+                if (!terms.Any(t => string.Equals(t.Id, vm.TermId, StringComparison.OrdinalIgnoreCase)))
                 {
                     ModelState.AddModelError(nameof(vm.CriterionId), "Tiêu chí không hợp lệ.");
                 }

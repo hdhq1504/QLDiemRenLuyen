@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -35,7 +34,10 @@ namespace QLDiemRenLuyen.Data.Student
 
             await using var conn = (OracleConnection)_db.CreateConnection();
             await conn.OpenAsync();
-            await using var cmd = new OracleCommand(sql, conn);
+            await using var cmd = new OracleCommand(sql, conn)
+            {
+                BindByName = true
+            };
             await using var reader = await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
             while (await reader.ReadAsync())
             {
@@ -59,7 +61,10 @@ namespace QLDiemRenLuyen.Data.Student
 
             await using var conn = (OracleConnection)_db.CreateConnection();
             await conn.OpenAsync();
-            await using var cmd = new OracleCommand(sql, conn);
+            await using var cmd = new OracleCommand(sql, conn)
+            {
+                BindByName = true
+            };
             await using var reader = await cmd.ExecuteReaderAsync(CommandBehavior.CloseConnection);
             while (await reader.ReadAsync())
             {
@@ -79,18 +84,21 @@ namespace QLDiemRenLuyen.Data.Student
         public async Task<PagedList<FeedbackItemVm>> GetFeedbacksAsync(string studentId, string? termId, int page, int pageSize, string? keyword)
         {
             const string sql = @"
-                SELECT f.ID,
-                       f.TITLE,
-                       f.STATUS,
-                       f.CREATED_AT,
-                       t.NAME AS TERM_NAME
-                  FROM FEEDBACKS f
-                  JOIN TERMS t ON t.ID = f.TERM_ID
-                 WHERE f.STUDENT_ID = :sid
-                   AND (:termId IS NULL OR f.TERM_ID = :termId)
-                   AND (:kw IS NULL OR LOWER(f.TITLE) LIKE '%' || LOWER(:kw) || '%')
-                 ORDER BY f.CREATED_AT DESC
-                 OFFSET :offset ROWS FETCH NEXT :pageSize ROWS ONLY";
+                SELECT *
+                  FROM (
+                        SELECT f.ID,
+                               f.TITLE,
+                               f.STATUS,
+                               f.CREATED_AT,
+                               t.NAME AS TERM_NAME,
+                               ROW_NUMBER() OVER (ORDER BY f.CREATED_AT DESC) AS RN
+                          FROM FEEDBACKS f
+                          JOIN TERMS t ON t.ID = f.TERM_ID
+                         WHERE f.STUDENT_ID = :sid
+                           AND (:termId IS NULL OR f.TERM_ID = :termId)
+                           AND (:kw IS NULL OR LOWER(f.TITLE) LIKE '%' || LOWER(:kw) || '%')
+                       )
+                 WHERE RN BETWEEN :startRow AND :endRow";
 
             const string countSql = @"
                 SELECT COUNT(*)
@@ -100,18 +108,34 @@ namespace QLDiemRenLuyen.Data.Student
                    AND (:kw IS NULL OR LOWER(f.TITLE) LIKE '%' || LOWER(:kw) || '%')";
 
             var items = new List<FeedbackItemVm>();
-            var offset = (page - 1) * pageSize;
+            var startRow = (page - 1) * pageSize + 1;
+            var endRow = startRow + pageSize - 1;
 
             await using var conn = (OracleConnection)_db.CreateConnection();
             await conn.OpenAsync();
 
-            await using (var cmd = new OracleCommand(sql, conn) { BindByName = true })
+            await using (var cmd = new OracleCommand(sql, conn)
             {
-                cmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input));
-                cmd.Parameters.Add(CreateNullableIntParameter("termId", ParseOptionalInt(termId)));
+                BindByName = true
+            })
+            {
+                cmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                });
+                cmd.Parameters.Add(CreateNullableStringParameter("termId", termId));
                 cmd.Parameters.Add(CreateNullableStringParameter("kw", keyword));
-                cmd.Parameters.Add(new OracleParameter("offset", OracleDbType.Int32, offset, ParameterDirection.Input));
-                cmd.Parameters.Add(new OracleParameter("pageSize", OracleDbType.Int32, pageSize, ParameterDirection.Input));
+                cmd.Parameters.Add(new OracleParameter("startRow", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = startRow
+                });
+                cmd.Parameters.Add(new OracleParameter("endRow", OracleDbType.Int32)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = endRow
+                });
 
                 await using var reader = await cmd.ExecuteReaderAsync();
                 while (await reader.ReadAsync())
@@ -128,10 +152,17 @@ namespace QLDiemRenLuyen.Data.Student
             }
 
             int total;
-            await using (var countCmd = new OracleCommand(countSql, conn) { BindByName = true })
+            await using (var countCmd = new OracleCommand(countSql, conn)
             {
-                countCmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input));
-                countCmd.Parameters.Add(CreateNullableIntParameter("termId", ParseOptionalInt(termId)));
+                BindByName = true
+            })
+            {
+                countCmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                });
+                countCmd.Parameters.Add(CreateNullableStringParameter("termId", termId));
                 countCmd.Parameters.Add(CreateNullableStringParameter("kw", keyword));
 
                 total = Convert.ToInt32(await countCmd.ExecuteScalarAsync());
@@ -174,8 +205,16 @@ namespace QLDiemRenLuyen.Data.Student
             await using var conn = (OracleConnection)_db.CreateConnection();
             await conn.OpenAsync();
             await using var cmd = new OracleCommand(sql, conn) { BindByName = true };
-            cmd.Parameters.Add(new OracleParameter("id", OracleDbType.Varchar2, id, ParameterDirection.Input));
-            cmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input));
+            cmd.Parameters.Add(new OracleParameter("id", OracleDbType.Varchar2)
+            {
+                Direction = ParameterDirection.Input,
+                Value = id
+            });
+            cmd.Parameters.Add(new OracleParameter("sid", OracleDbType.Varchar2)
+            {
+                Direction = ParameterDirection.Input,
+                Value = studentId
+            });
 
             await using var reader = await cmd.ExecuteReaderAsync(CommandBehavior.SingleRow);
             if (await reader.ReadAsync())
@@ -185,10 +224,10 @@ namespace QLDiemRenLuyen.Data.Student
                     Id = reader.GetString(0),
                     TermId = reader.IsDBNull(1)
                         ? string.Empty
-                        : reader.GetDecimal(1).ToString(CultureInfo.InvariantCulture),
+                        : reader.GetString(1),
                     CriterionId = reader.IsDBNull(2)
                         ? null
-                        : reader.GetDecimal(2).ToString(CultureInfo.InvariantCulture),
+                        : reader.GetString(2),
                     Title = reader.IsDBNull(3) ? string.Empty : reader.GetString(3),
                     Content = reader.IsDBNull(4) ? string.Empty : reader.GetString(4),
                     Status = reader.IsDBNull(5) ? string.Empty : reader.GetString(5),
@@ -214,17 +253,39 @@ namespace QLDiemRenLuyen.Data.Student
                 VALUES (:id, :sid, :termId, :critId, :title, :content, :status, SYSTIMESTAMP)";
 
             var id = Guid.NewGuid().ToString("N");
-            var termId = ParseRequiredInt(vm.TermId, nameof(vm.TermId));
-            var criterionId = ParseOptionalInt(vm.CriterionId);
             var parameters = new[]
             {
-                new OracleParameter("id", OracleDbType.Varchar2, id, ParameterDirection.Input),
-                new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input),
-                new OracleParameter("termId", OracleDbType.Int32, termId, ParameterDirection.Input),
-                CreateNullableIntParameter("critId", criterionId),
-                new OracleParameter("title", OracleDbType.Varchar2, vm.Title, ParameterDirection.Input),
-                new OracleParameter("content", OracleDbType.Clob, vm.Content, ParameterDirection.Input),
-                new OracleParameter("status", OracleDbType.Varchar2, status, ParameterDirection.Input)
+                new OracleParameter("id", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = id
+                },
+                new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                },
+                new OracleParameter("termId", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = vm.TermId
+                },
+                CreateNullableStringParameter("critId", vm.CriterionId),
+                new OracleParameter("title", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = vm.Title
+                },
+                new OracleParameter("content", OracleDbType.Clob)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = (object?)vm.Content ?? DBNull.Value
+                },
+                new OracleParameter("status", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = status
+                }
             };
 
             try
@@ -254,17 +315,39 @@ namespace QLDiemRenLuyen.Data.Student
                        UPDATED_AT = SYSTIMESTAMP
                  WHERE ID = :id AND STUDENT_ID = :sid AND STATUS = 'DRAFT'";
 
-            var termId = ParseRequiredInt(vm.TermId, nameof(vm.TermId));
-            var criterionId = ParseOptionalInt(vm.CriterionId);
             var parameters = new[]
             {
-                new OracleParameter("termId", OracleDbType.Int32, termId, ParameterDirection.Input),
-                CreateNullableIntParameter("critId", criterionId),
-                new OracleParameter("title", OracleDbType.Varchar2, vm.Title, ParameterDirection.Input),
-                new OracleParameter("content", OracleDbType.Clob, vm.Content, ParameterDirection.Input),
-                new OracleParameter("status", OracleDbType.Varchar2, status, ParameterDirection.Input),
-                new OracleParameter("id", OracleDbType.Varchar2, id, ParameterDirection.Input),
-                new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input)
+                new OracleParameter("termId", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = vm.TermId
+                },
+                CreateNullableStringParameter("critId", vm.CriterionId),
+                new OracleParameter("title", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = vm.Title
+                },
+                new OracleParameter("content", OracleDbType.Clob)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = (object?)vm.Content ?? DBNull.Value
+                },
+                new OracleParameter("status", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = status
+                },
+                new OracleParameter("id", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = id
+                },
+                new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                }
             };
 
             try
@@ -288,8 +371,16 @@ namespace QLDiemRenLuyen.Data.Student
 
             var parameters = new[]
             {
-                new OracleParameter("id", OracleDbType.Varchar2, id, ParameterDirection.Input),
-                new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input)
+                new OracleParameter("id", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = id
+                },
+                new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                }
             };
 
             try
@@ -316,11 +407,31 @@ namespace QLDiemRenLuyen.Data.Student
             var json = JsonSerializer.Serialize(details ?? new { });
             var parameters = new[]
             {
-                new OracleParameter("sid", OracleDbType.Varchar2, studentId, ParameterDirection.Input),
-                new OracleParameter("action", OracleDbType.Varchar2, action, ParameterDirection.Input),
-                new OracleParameter("ip", OracleDbType.Varchar2, clientIp ?? string.Empty, ParameterDirection.Input),
-                new OracleParameter("ua", OracleDbType.Varchar2, userAgent ?? string.Empty, ParameterDirection.Input),
-                new OracleParameter("details", OracleDbType.Clob, json, ParameterDirection.Input)
+                new OracleParameter("sid", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = studentId
+                },
+                new OracleParameter("action", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = action
+                },
+                new OracleParameter("ip", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = clientIp ?? string.Empty
+                },
+                new OracleParameter("ua", OracleDbType.Varchar2)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = userAgent ?? string.Empty
+                },
+                new OracleParameter("details", OracleDbType.Clob)
+                {
+                    Direction = ParameterDirection.Input,
+                    Value = json
+                }
             };
 
             try
@@ -335,36 +446,11 @@ namespace QLDiemRenLuyen.Data.Student
 
         private static OracleParameter CreateNullableStringParameter(string name, string? value)
         {
-            return string.IsNullOrWhiteSpace(value)
-                ? new OracleParameter(name, OracleDbType.Varchar2, DBNull.Value, ParameterDirection.Input)
-                : new OracleParameter(name, OracleDbType.Varchar2, value, ParameterDirection.Input);
-        }
-
-        private static OracleParameter CreateNullableIntParameter(string name, int? value)
-        {
-            return value.HasValue
-                ? new OracleParameter(name, OracleDbType.Int32, value.Value, ParameterDirection.Input)
-                : new OracleParameter(name, OracleDbType.Int32, DBNull.Value, ParameterDirection.Input);
-        }
-
-        private static int ParseRequiredInt(string value, string paramName)
-        {
-            if (int.TryParse(value, out var result))
+            return new OracleParameter(name, OracleDbType.Varchar2)
             {
-                return result;
-            }
-
-            throw new ArgumentException($"Giá trị {paramName} không hợp lệ.", paramName);
-        }
-
-        private static int? ParseOptionalInt(string? value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return null;
-            }
-
-            return int.TryParse(value, out var result) ? result : null;
+                Direction = ParameterDirection.Input,
+                Value = string.IsNullOrWhiteSpace(value) ? DBNull.Value : value
+            };
         }
     }
 }
