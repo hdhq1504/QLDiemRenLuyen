@@ -20,6 +20,8 @@ namespace QLDiemRenLuyen.Controllers.Student
             {
                 FullName = "Nguyễn Văn A",
                 TotalScore = 82,
+                Classification = "Tốt",
+                Status = "Đang xét duyệt",
                 ActivitiesJoined = 6,
                 ProofsUploaded = 4,
                 FeedbackCount = 2,

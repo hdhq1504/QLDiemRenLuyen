@@ -27,170 +27,190 @@
     }
 }
 
-<div id="student-activities-page" class="container-fluid py-3">
-    <h2 class="mb-3">Danh sách hoạt động</h2>
+<div class="student-container">
+    <div id="student-activities-page" class="student-page">
+        <section class="page-header">
+            <div class="page-header__content">
+                <h1>Hoạt động sinh viên</h1>
+                <p>Lọc và đăng ký những hoạt động phù hợp để gia tăng điểm rèn luyện.</p>
+                <span class="page-header__tagline">
+                    <i class="fa-solid fa-list-check"></i>
+                    @((Model.Items?.TotalItems ?? 0).ToString()) hoạt động sẵn sàng
+                </span>
+            </div>
+            <div class="page-header__actions">
+                <button type="button" class="btn btn-outline-primary btn-send-reminders" data-action-url="/student/activities/send-reminders">
+                    <i class="fa fa-envelope me-2"></i>Gửi nhắc nhở
+                </button>
+                <a class="btn btn-primary" href="/student/proofs">
+                    <i class="fa-solid fa-cloud-arrow-up me-2"></i>Quản lý minh chứng
+                </a>
+            </div>
+        </section>
 
-    <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
+        <div id="toastArea" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080;"></div>
 
-    <form method="get" class="row g-2 align-items-end mb-3">
-        <div class="col-md-4 col-lg-3">
-            <label for="termId" class="form-label">Học kỳ</label>
-            <select id="termId" name="termId" class="form-select">
-                <option value="">-- Tất cả --</option>
-                @foreach (var t in Model.Terms)
-                {
-                    <option value="@t.Id" selected="@(t.Id == Model.SelectedTermId)">
-                        @t.Name
-                    </option>
-                }
-            </select>
-        </div>
-        <div class="col-md-8 col-lg-5">
-            <label for="q" class="form-label">Tìm kiếm</label>
-            <input id="q" name="q" value="@(Model.Keyword ?? "")" class="form-control" placeholder="Nhập từ khóa tiêu đề/mô tả..." />
-        </div>
-        <div class="col-md-6 col-lg-2 d-grid">
-            <button type="submit" class="btn btn-primary"><i class="fa fa-search me-1"></i>Lọc</button>
-        </div>
-        <div class="col-md-6 col-lg-2 d-grid">
-            <button type="button" class="btn btn-outline-primary btn-send-reminders" data-action-url="/student/activities/send-reminders">
-                <i class="fa fa-envelope me-1"></i> Gửi nhắc nhở
-            </button>
-        </div>
-    </form>
+        <section class="page-section">
+            <form method="get" class="row g-3 align-items-end">
+                <div class="col-md-4 col-lg-3">
+                    <label for="termId" class="form-label">Học kỳ</label>
+                    <select id="termId" name="termId" class="form-select">
+                        <option value="">-- Tất cả --</option>
+                        @foreach (var t in Model.Terms)
+                        {
+                            <option value="@t.Id" selected="@(t.Id == Model.SelectedTermId)">@t.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-8 col-lg-5">
+                    <label for="q" class="form-label">Tìm kiếm</label>
+                    <input id="q" name="q" value="@(Model.Keyword ?? "")" class="form-control" placeholder="Nhập từ khóa tiêu đề hoặc mô tả" />
+                </div>
+                <div class="col-md-6 col-lg-2 d-grid">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-search me-2"></i>Lọc</button>
+                </div>
+                <div class="col-md-6 col-lg-2 d-grid">
+                    <a href="/student/activities" class="btn btn-outline-primary"><i class="fa fa-rotate me-2"></i>Đặt lại</a>
+                </div>
+            </form>
+        </section>
 
-    @Html.AntiForgeryToken()
+        @Html.AntiForgeryToken()
 
-    @if (Model.Items?.Data == null || !Model.Items.Data.Any())
-    {
-        <div class="alert alert-info"><i class="fa fa-info-circle me-2"></i>Chưa có hoạt động phù hợp.</div>
-    }
-    else
-    {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
-            @foreach (var a in Model.Items.Data)
-            {
-                <div class="col">
-                    <div class="card h-100 shadow-sm" data-activity-id="@a.Id">
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex align-items-start justify-content-between mb-2">
-                                <h5 class="card-title me-2">@a.Title</h5>
-                                <span class="@StatusBadgeClass(a.Status)" data-status="@a.Status">@a.Status</span>
-                            </div>
+        @if (Model.Items?.Data == null || !Model.Items.Data.Any())
+        {
+            <div class="page-section page-section--soft text-center text-muted">
+                <i class="fa fa-info-circle fa-2x mb-3"></i>
+                <p class="mb-0">Chưa có hoạt động nào phù hợp với bộ lọc hiện tại.</p>
+            </div>
+        }
+        else
+        {
+            <section class="page-section page-section--soft">
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3">
+                    @foreach (var a in Model.Items.Data)
+                    {
+                        <div class="col">
+                            <div class="card h-100" data-activity-id="@a.Id">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex align-items-start justify-content-between mb-3">
+                                        <h5 class="card-title me-2">@a.Title</h5>
+                                        <span class="@StatusBadgeClass(a.Status)" data-status="@a.Status">@a.Status</span>
+                                    </div>
 
-                            <div class="text-muted small mb-2">
-                                <i class="fa fa-calendar me-1"></i>
-                                @a.StartAt.ToString("dd/MM/yyyy HH:mm", vi) – @a.EndAt.ToString("dd/MM/yyyy HH:mm", vi)
-                            </div>
+                                    <div class="text-muted small mb-2">
+                                        <i class="fa fa-calendar me-1"></i>
+                                        @a.StartAt.ToString("dd/MM/yyyy HH:mm", vi) – @a.EndAt.ToString("dd/MM/yyyy HH:mm", vi)
+                                    </div>
 
-                            @if (!string.IsNullOrWhiteSpace(a.CriterionName))
-                            {
-                                <div class="text-muted small mb-2">
-                                    <i class="fa fa-tags me-1"></i>@a.CriterionName
+                                    @if (!string.IsNullOrWhiteSpace(a.CriterionName))
+                                    {
+                                        <div class="text-muted small mb-2">
+                                            <i class="fa fa-tags me-1"></i>@a.CriterionName
+                                        </div>
+                                    }
+
+                                    <div class="d-flex align-items-center justify-content-between text-muted small mb-3">
+                                        <span>
+                                            <i class="fa fa-users me-1"></i>
+                                            <span class="registered-count">@a.RegisteredCount</span>
+                                        </span>
+                                        <span class="max-seats">
+                                            @if (a.MaxSeats.HasValue)
+                                            {
+                                                @($"Tối đa {a.MaxSeats.Value}")
+                                            }
+                                            else
+                                            {
+                                                @("Không giới hạn")
+                                            }
+                                        </span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <span class="@StateBadgeClass(a.StudentState)" data-state="@a.StudentState">@a.StudentState</span>
+                                    </div>
+
+                                    <div class="mt-auto d-flex justify-content-center gap-2">
+                                        @{
+                                            var status = (a.Status ?? "").ToUpperInvariant();
+                                            var state = (a.StudentState ?? "").ToUpperInvariant();
+                                            if (state == "CHECKED_IN")
+                                            {
+                                                <button type="button" class="btn btn-outline-success w-100" disabled>
+                                                    <i class="fa fa-check me-1"></i>Đã điểm danh
+                                                </button>;
+                                            }
+                                            else if (status == "OPEN" && state == "NOT_REGISTERED")
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-primary w-100 btn-register"
+                                                        data-action-url="/student/activities/@a.Id/register">
+                                                    <i class="fa fa-check me-1"></i>Đăng ký
+                                                </button>;
+                                            }
+                                            else if (status == "OPEN" && state == "REGISTERED")
+                                            {
+                                                <button type="button"
+                                                        class="btn btn-outline-danger w-100 btn-unregister"
+                                                        data-action-url="/student/activities/@a.Id/unregister">
+                                                    <i class="fa fa-times me-1"></i>Hủy đăng ký
+                                                </button>;
+                                            }
+                                            else
+                                            {
+                                                var disabledLabel = status == "CANCELLED" ? "Hoạt động đã huỷ" : "Đã đóng";
+                                                var disabledIcon = status == "CANCELLED" ? "fa-ban" : "fa-lock";
+                                                <button type="button" class="btn btn-secondary w-100" disabled>
+                                                    <i class="fa @disabledIcon me-1"></i>@disabledLabel
+                                                </button>;
+                                            }
+
+                                            var detailUrl = $"/student/activities/{a.Id}";
+                                        }
+                                        <button type="button"
+                                                class="btn btn-light border w-100 btn-detail"
+                                                data-detail-url="@detailUrl"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#activityDetailModal">
+                                            <i class="fa fa-info-circle me-1"></i>Chi tiết
+                                        </button>
+                                    </div>
                                 </div>
-                            }
-
-                            <div class="text-muted small mb-3">
-                                <i class="fa fa-users me-1"></i>
-                                <span class="registered-count">@a.RegisteredCount</span>
-                                <span class="max-seats">
-                                    @if (a.MaxSeats.HasValue)
-                                    {
-                                        @($" / {a.MaxSeats.Value}")
-                                    }
-                                    else
-                                    {
-                                        @("- Không giới hạn")
-                                    }
-                                </span>
-                            </div>
-
-                            <div class="mb-3">
-                                <span class="@StateBadgeClass(a.StudentState)" data-state="@a.StudentState">@a.StudentState</span>
-                            </div>
-
-                            <div class="mt-auto d-flex justify-content-center gap-2">
-                                @{
-                                    var status = (a.Status ?? "").ToUpperInvariant();
-                                    var state = (a.StudentState ?? "").ToUpperInvariant();
-                                    if (state == "CHECKED_IN")
-                                    {
-                                        <button type="button" class="btn btn-outline-success w-100" disabled>
-                                            <i class="fa fa-check me-1"></i>Đã điểm danh
-                                        </button>
-                                        ;
-                                    }
-                                    else if (status == "OPEN" && state == "NOT_REGISTERED")
-                                    {
-                                        <button type="button"
-                                                class="btn btn-primary w-100 btn-register"
-                                                data-action-url="/student/activities/@a.Id/register">
-                                            <i class="fa fa-check me-1"></i>Đăng ký
-                                        </button>
-                                        ;
-                                    }
-                                    else if (status == "OPEN" && state == "REGISTERED")
-                                    {
-                                        <button type="button"
-                                                class="btn btn-outline-danger w-100 btn-unregister"
-                                                data-action-url="/student/activities/@a.Id/unregister">
-                                            <i class="fa fa-times me-1"></i>Hủy đăng ký
-                                        </button>
-                                        ;
-                                    }
-                                    else
-                                    {
-                                        var disabledLabel = status == "CANCELLED" ? "Hoạt động đã huỷ" : "Đã đóng";
-                                        var disabledIcon = status == "CANCELLED" ? "fa-ban" : "fa-lock";
-                                        <button type="button" class="btn btn-secondary w-100" disabled>
-                                            <i class="fa @disabledIcon me-1"></i>@disabledLabel
-                                        </button>
-                                        ;
-                                    }
-
-                                    var detailUrl = $"/student/activities/{a.Id}";
-                                }
-                                <button type="button"
-                                        class="btn btn-light border w-100 btn-detail"
-                                        data-detail-url="@detailUrl"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#activityDetailModal">
-                                    <i class="fa fa-info-circle me-1"></i>Chi tiết
-                                </button>
                             </div>
                         </div>
-                    </div>
+                    }
                 </div>
-            }
-        </div>
 
-        <nav class="mt-4" aria-label="Phân trang">
-            <ul class="pagination justify-content-center">
-                @{
-                    var page = Model.Items.Page;
-                    var totalPages = Model.Items.TotalPages;
-                    string pageUrl(int p) =>
-                    Url.Action("Index", new { termId = Model.SelectedTermId, q = Model.Keyword, page = p, pageSize = Model.Items.PageSize }) ?? $"?page={p}";
-                }
-                <li class="page-item @(page <= 1 ? "disabled" : "")">
-                    <a class="page-link" href="@(pageUrl(Math.Max(1, page - 1)))" aria-label="Trước">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-                @for (int p = 1; p <= totalPages; p++)
-                {
-                    <li class="page-item @(p == page ? "active" : "")">
-                        <a class="page-link" href="@pageUrl(p)">@p</a>
-                    </li>
-                }
-                <li class="page-item @(page >= totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@(pageUrl(Math.Min(totalPages, page + 1)))" aria-label="Sau">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    }
+                <nav class="mt-4" aria-label="Phân trang">
+                    <ul class="pagination justify-content-center">
+                        @{
+                            var page = Model.Items.Page;
+                            var totalPages = Model.Items.TotalPages;
+                            string pageUrl(int p) =>
+                            Url.Action("Index", new { termId = Model.SelectedTermId, q = Model.Keyword, page = p, pageSize = Model.Items.PageSize }) ?? $"?page={p}";
+                        }
+                        <li class="page-item @(page <= 1 ? "disabled" : "")">
+                            <a class="page-link" href="@(pageUrl(Math.Max(1, page - 1)))" aria-label="Trước">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        @for (int p = 1; p <= totalPages; p++)
+                        {
+                            <li class="page-item @(p == page ? "active" : "")">
+                                <a class="page-link" href="@pageUrl(p)">@p</a>
+                            </li>
+                        }
+                        <li class="page-item @(page >= totalPages ? "disabled" : "")">
+                            <a class="page-link" href="@(pageUrl(Math.Min(totalPages, page + 1)))" aria-label="Sau">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </section>
+        }
+    </div>
 </div>
 
 <div class="modal fade" id="activityDetailModal" tabindex="-1" aria-labelledby="activityDetailModalLabel" aria-hidden="true">
@@ -200,7 +220,3 @@
         </div>
     </div>
 </div>
-
-@section Scripts {
-    <script src="~/js/student.activities.js"></script>
-}

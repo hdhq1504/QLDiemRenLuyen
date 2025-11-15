@@ -1,18 +1,19 @@
-﻿#student-notifications-page .notification-table td {
+#student-notifications-page .notification-table td {
     vertical-align: middle;
 }
 
 #student-notifications-page .notification-title {
     margin: 0;
-    color: #212529;
-}
-
-#student-notifications-page .notification-row-unread .notification-title {
+    color: #1e293b;
     font-weight: 600;
 }
 
+#student-notifications-page .notification-row-unread .notification-title {
+    font-weight: 700;
+}
+
 #student-notifications-page .notification-status {
-    min-width: 100px;
+    min-width: 110px;
 }
 
 #student-notifications-page .btn-group .btn {
