@@ -26,38 +26,41 @@
 }
 
 <header class="student-header shadow-sm">
-    <nav class="navbar navbar-expand-md navbar-dark bg-primary px-3">
-        <button class="btn btn-outline-light d-md-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentSidebar" aria-controls="studentSidebar" aria-label="Mở menu">
-            <i class="fa-solid fa-bars"></i>
-        </button>
+    <div class="student-header__inner">
+        <div class="student-header__left">
+            <button class="student-header__toggle d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#studentSidebar" aria-controls="studentSidebar" aria-label="Mở menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
 
-        <a class="navbar-brand d-flex align-items-center" href="/student/home">
-            <img src="~/images/logo.jpg" class="logo img-fluid me-2" alt="Logo HUIT" />
-        </a>
+            <a class="student-header__brand" href="/student/home">
+                <span class="sidebar-logo__dot"></span>
+                <div class="student-header__brand-text">
+                    <span class="student-header__brand-title">Cổng sinh viên</span>
+                    <small class="student-header__brand-sub">Hệ thống điểm rèn luyện</small>
+                </div>
+            </a>
+        </div>
 
-        <div class="ms-auto d-flex align-items-center gap-3">
-            <a class="btn btn-icon position-relative text-white" href="/student/notifications" aria-label="Thông báo">
-                <i class="fa-regular fa-bell fa-lg"></i>
+        <div class="student-header__right">
+            <a class="student-header__icon" href="/student/notifications" aria-label="Thông báo">
+                <i class="fa-regular fa-bell"></i>
                 @if (notificationCount > 0)
                 {
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        @notificationCount
-                        <span class="visually-hidden">Thông báo chưa đọc</span>
-                    </span>
+                    <span class="student-header__badge">@notificationCount</span>
                 }
             </a>
 
             <div class="dropdown">
-                <button class="btn btn-profile dropdown-toggle d-flex align-items-center" type="button" id="studentUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="student-header__profile dropdown-toggle" type="button" id="studentUserMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     @if (!string.IsNullOrWhiteSpace(avatarUrl))
                     {
-                        <img src="@avatarUrl" alt="Avatar sinh viên" class="avatar-image me-2" />
+                        <img src="@avatarUrl" alt="Avatar sinh viên" class="avatar-image" />
                     }
                     else
                     {
-                        <span class="avatar-initials me-2">@initials</span>
+                        <span class="avatar-initials">@initials</span>
                     }
-                    <span class="d-none d-sm-inline">@fullName</span>
+                    <span class="student-header__profile-name">@fullName</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="studentUserMenu">
                     <li>
@@ -82,5 +85,5 @@
                 </ul>
             </div>
         </div>
-    </nav>
+    </div>
 </header>

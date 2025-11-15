@@ -1,21 +1,21 @@
-﻿.status-draft {
-    background-color: #6c757d;
-    color: #fff;
+.status-draft {
+    background: rgba(148, 163, 184, 0.25);
+    color: #334155;
 }
 
 .status-submitted {
-    background-color: #0dcaf0;
-    color: #0a1c2c;
+    background: rgba(14, 165, 233, 0.2);
+    color: #0f4c75;
 }
 
 .status-responded {
-    background-color: #198754;
-    color: #fff;
+    background: rgba(16, 185, 129, 0.2);
+    color: #065f46;
 }
 
 .status-closed {
-    background-color: #343a40;
-    color: #fff;
+    background: rgba(15, 23, 42, 0.25);
+    color: #0f172a;
 }
 
 #student-feedback-page .table td .text-truncate {

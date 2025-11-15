@@ -7,45 +7,75 @@
     };
 }
 
-<aside id="studentSidebar" class="sidebar offcanvas offcanvas-start offcanvas-md shadow-sm" data-bs-scroll="true" tabindex="-1" aria-labelledby="studentSidebarLabel" aria-label="Điều hướng sinh viên">
-    <div class="offcanvas-header d-md-none border-bottom">
-        <h5 class="offcanvas-title" id="studentSidebarLabel">Menu sinh viên</h5>
+<aside id="studentSidebar" class="student-sidebar offcanvas offcanvas-start offcanvas-md" data-bs-scroll="true" tabindex="-1" aria-labelledby="studentSidebarLabel" aria-label="Điều hướng sinh viên">
+    <div class="student-sidebar__mobile-header offcanvas-header d-md-none">
+        <div class="d-flex align-items-center gap-2">
+            <span class="sidebar-logo__dot"></span>
+            <div>
+                <h5 class="offcanvas-title mb-0" id="studentSidebarLabel">Cổng sinh viên</h5>
+                <small class="text-muted">Điểm rèn luyện</small>
+            </div>
+        </div>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
     </div>
-    <div class="offcanvas-body d-md-flex flex-column p-0">
-        <nav class="navbar-light" role="navigation">
+    <div class="offcanvas-body student-sidebar__body d-md-flex flex-column p-0">
+        <div class="student-sidebar__brand d-none d-md-flex align-items-center gap-3 px-4 py-4">
+            <span class="sidebar-logo__dot"></span>
+            <div class="student-sidebar__brand-text">
+                <span class="student-sidebar__brand-title">Cổng sinh viên</span>
+                <small class="student-sidebar__brand-sub">Hệ thống điểm rèn luyện</small>
+            </div>
+        </div>
+
+        <nav class="student-sidebar__nav" role="navigation">
             <ul class="nav flex-column">
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/home")" href="/student/home">
-                        <i class="fa-solid fa-house me-2"></i>Bảng điều khiển
+                        <i class="fa-solid fa-house"></i>
+                        <span>Bảng điều khiển</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/activities")" href="/student/activities">
-                        <i class="fa-solid fa-calendar-check me-2"></i>Hoạt động
+                        <i class="fa-solid fa-calendar-check"></i>
+                        <span>Hoạt động</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/scores")" href="/student/scores">
-                        <i class="fa-solid fa-chart-line me-2"></i>Điểm của tôi
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>Điểm của tôi</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/proofs")" href="/student/proofs">
-                        <i class="fa-solid fa-file-circle-check me-2"></i>Minh chứng
+                        <i class="fa-solid fa-file-circle-check"></i>
+                        <span>Minh chứng</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/feedback")" href="/student/feedback">
-                        <i class="fa-solid fa-comment-dots me-2"></i>Phản hồi &amp; khiếu nại
+                        <i class="fa-solid fa-comment-dots"></i>
+                        <span>Phản hồi &amp; khiếu nại</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link @isActive("/student/notifications")" href="/student/notifications">
-                        <i class="fa-solid fa-bell me-2"></i>Thông báo
+                        <i class="fa-solid fa-bell"></i>
+                        <span>Thông báo</span>
                     </a>
                 </li>
             </ul>
         </nav>
+
+        <div class="student-sidebar__footer mt-auto d-none d-md-block px-4 pb-4">
+            <div class="student-sidebar__footer-card">
+                <h6>Hỗ trợ</h6>
+                <p class="mb-2">Liên hệ phòng CTSV khi cần trợ giúp thêm về hệ thống.</p>
+                <a class="btn btn-outline-light btn-sm w-100" href="mailto:ctsv@huit.edu.vn">
+                    <i class="fa-solid fa-life-ring me-2"></i>Gửi email hỗ trợ
+                </a>
+            </div>
+        </div>
     </div>
 </aside>

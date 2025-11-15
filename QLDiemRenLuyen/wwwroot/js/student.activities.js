@@ -83,10 +83,10 @@
             const maxSeats = wrapper.querySelector('.max-seats');
             if (maxSeats) {
                 if (activity.maxSeats !== null && activity.maxSeats !== undefined) {
-                    maxSeats.textContent = ` / ${activity.maxSeats}`;
+                    maxSeats.textContent = `Tối đa ${activity.maxSeats}`;
                     maxSeats.dataset.max = activity.maxSeats;
                 } else {
-                    maxSeats.textContent = '- Không giới hạn';
+                    maxSeats.textContent = 'Không giới hạn';
                     maxSeats.dataset.max = 'unlimited';
                 }
             }
@@ -140,10 +140,10 @@
                 }
                 if (maxSeats) {
                     if (activity.maxSeats !== null && activity.maxSeats !== undefined) {
-                        maxSeats.textContent = `/ ${activity.maxSeats}`;
+                        maxSeats.textContent = `Tối đa ${activity.maxSeats}`;
                         maxSeats.dataset.max = activity.maxSeats;
                     } else {
-                        maxSeats.textContent = '- Không giới hạn';
+                        maxSeats.textContent = 'Không giới hạn';
                         maxSeats.dataset.max = 'unlimited';
                     }
                 }

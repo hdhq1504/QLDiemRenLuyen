@@ -10,6 +10,8 @@ namespace QLDiemRenLuyen.ViewModels.Student
     {
         public string FullName { get; set; } = string.Empty;
         public int TotalScore { get; set; }
+        public string Classification { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public int ActivitiesJoined { get; set; }
         public int ProofsUploaded { get; set; }
         public int FeedbackCount { get; set; }

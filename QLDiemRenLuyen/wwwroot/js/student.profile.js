@@ -4,8 +4,8 @@
     const profileRoot = document.querySelector('[data-profile]');
     const modalPlaceholder = document.getElementById('editProfileModalPlaceholder');
     const toastContainer = document.querySelector('.toast-container');
-    const editBtn = document.getElementById('editProfileBtn');
-    const avatarBtn = document.getElementById('changeAvatarBtn');
+    const editTriggers = Array.from(document.querySelectorAll('[data-trigger-edit]'));
+    const avatarTriggers = Array.from(document.querySelectorAll('[data-trigger-avatar]'));
     const avatarInput = document.getElementById('avatarInput');
 
     if (!tokenInput || !profileRoot) {
@@ -51,6 +51,10 @@
         setText('[data-gender]', profile.gender || '-');
         setText('[data-phone]', profile.phone || '-');
         setText('[data-address]', profile.address || '-');
+        const codeTagline = profileRoot.querySelector('[data-student-code-tagline]');
+        if (codeTagline) {
+            codeTagline.textContent = profile.studentCode || 'Chưa có';
+        }
         const dobEl = profileRoot.querySelector('[data-dob]');
         if (dobEl) {
             dobEl.textContent = profile.dob ? new Date(profile.dob).toLocaleDateString('vi-VN') : '-';
@@ -159,12 +163,10 @@
         }
     };
 
-    if (editBtn) {
-        editBtn.addEventListener('click', openEditModal);
-    }
+    editTriggers.forEach((btn) => btn.addEventListener('click', openEditModal));
 
-    if (avatarBtn && avatarInput) {
-        avatarBtn.addEventListener('click', () => avatarInput.click());
+    if (avatarInput) {
+        avatarTriggers.forEach((btn) => btn.addEventListener('click', () => avatarInput.click()));
         avatarInput.addEventListener('change', () => {
             const file = avatarInput.files && avatarInput.files[0];
             if (!file) return;
